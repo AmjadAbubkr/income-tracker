@@ -21,8 +21,8 @@
         border-right: none;
         border-top: 1px solid var(--border);
         justify-content: center;
-        background: rgba(22, 27, 45, 0.95);
-        /* Ensure background opacity */
+        background: var(--bg-card-solid);
+        border-bottom: none;
     }
 
     .more-sheet {
@@ -31,7 +31,6 @@
         right: 0;
         bottom: 0;
         z-index: 500;
-        /* Lower than .sidebar z-index 1000 */
 
         background: var(--bg-card-solid);
         border-top: 1px solid var(--border);

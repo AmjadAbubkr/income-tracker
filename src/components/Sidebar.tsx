@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 
 interface SidebarProps {
   currentView: string;
@@ -8,99 +9,34 @@ interface SidebarProps {
   onToggleCollapse: () => void;
 }
 
-// Professional SVG icons
-const DashboardIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="7" height="7" rx="1" />
-    <rect x="14" y="3" width="7" height="7" rx="1" />
-    <rect x="3" y="14" width="7" height="7" rx="1" />
-    <rect x="14" y="14" width="7" height="7" rx="1" />
-  </svg>
-);
-
-const SalesIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="1" x2="12" y2="23" />
-    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-  </svg>
-);
-
-const ProductsIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-    <line x1="12" y1="22.08" x2="12" y2="12" />
-  </svg>
-);
-
-const AnalyticsIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="18" y1="20" x2="18" y2="10" />
-    <line x1="12" y1="20" x2="12" y2="4" />
-    <line x1="6" y1="20" x2="6" y2="14" />
-  </svg>
-);
-
-const SettingsIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="3" />
-    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-  </svg>
-);
-
-const ChevronLeftIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="15 18 9 12 15 6" />
-  </svg>
-);
-
-const ChevronRightIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="9 18 15 12 9 6" />
-  </svg>
-);
-
-const ExpensesIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="5" width="20" height="14" rx="2" />
-    <line x1="2" y1="10" x2="22" y2="10" />
-  </svg>
-);
-
-const SubscriptionsIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 12a9 9 0 0 1-9 9" />
-    <path d="M3 12a9 9 0 0 1 9-9" />
-    <polyline points="16 16 12 20 8 16" />
-    <polyline points="8 8 12 4 16 8" />
-  </svg>
-);
-
-const MoreIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="5" cy="12" r="1.6" />
-    <circle cx="12" cy="12" r="1.6" />
-    <circle cx="19" cy="12" r="1.6" />
-  </svg>
+/**
+ * MaterialIcon – renders a Google Material Symbols Outlined icon.
+ * Using <span> with the "material-symbols-outlined" class, which is
+ * loaded via Google Fonts in index.html.
+ */
+const MaterialIcon = ({ name }: { name: string }) => (
+  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>{name}</span>
 );
 
 export default function Sidebar({ currentView, onViewChange, isCollapsed, onToggleCollapse }: SidebarProps) {
   const { t, isRTL } = useLanguage();
+  const { user } = useAuth();
   const [isMobile, setIsMobile] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const moreSheetRef = useRef<HTMLDivElement | null>(null);
   const moreButtonRef = useRef<HTMLButtonElement | null>(null);
 
+  /* Each item maps to a Material Symbols icon name from the Stitch designs */
   const menuItems = [
-    { id: 'dashboard', label: t.dashboard, icon: <DashboardIcon /> },
-    { id: 'sales', label: t.sales, icon: <SalesIcon /> },
-    { id: 'expenses', label: t.expenses, icon: <ExpensesIcon /> },
-    { id: 'products', label: t.products, icon: <ProductsIcon /> },
-    { id: 'subscriptions', label: t.subscriptions, icon: <SubscriptionsIcon /> },
-    { id: 'analytics', label: t.analytics, icon: <AnalyticsIcon /> },
-    { id: 'settings', label: t.settings, icon: <SettingsIcon /> },
+    { id: 'dashboard', label: t.dashboard, icon: <MaterialIcon name="dashboard" /> },
+    { id: 'sales', label: t.sales, icon: <MaterialIcon name="point_of_sale" /> },
+    { id: 'expenses', label: t.expenses, icon: <MaterialIcon name="receipt_long" /> },
+    { id: 'products', label: t.products, icon: <MaterialIcon name="inventory_2" /> },
+    { id: 'subscriptions', label: t.subscriptions, icon: <MaterialIcon name="autorenew" /> },
+    { id: 'analytics', label: t.analytics, icon: <MaterialIcon name="bar_chart" /> },
+    { id: 'settings', label: t.settings, icon: <MaterialIcon name="settings" /> },
   ];
-
+  // ... existing useEffects for mobile logic ...
   useEffect(() => {
     const media = window.matchMedia('(max-width: 768px)');
 
@@ -184,10 +120,18 @@ export default function Sidebar({ currentView, onViewChange, isCollapsed, onTogg
   return (
     <>
       <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+        {/* Sidebar header — branded logo area matching Stitch design */}
         <div className="sidebar-header" style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}>
-          {!isCollapsed && <h2 className="sidebar-logo">Income Tracker</h2>}
+          {!isCollapsed && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ background: 'rgba(17, 82, 212, 0.15)', padding: '6px', borderRadius: '8px', color: '#1152d4', display: 'flex' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 24 }}>account_balance_wallet</span>
+              </div>
+              <h2 className="sidebar-logo">Income Tracker</h2>
+            </div>
+          )}
           <button className="sidebar-toggle" onClick={onToggleCollapse} title={isCollapsed ? 'Expand' : 'Collapse'}>
-            {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            <MaterialIcon name={isCollapsed ? 'chevron_right' : 'chevron_left'} />
           </button>
         </div>
         <nav className="sidebar-nav">
@@ -211,7 +155,7 @@ export default function Sidebar({ currentView, onViewChange, isCollapsed, onTogg
                 aria-haspopup="menu"
                 ref={moreButtonRef}
               >
-                <span className="sidebar-icon"><MoreIcon /></span>
+                <span className="sidebar-icon"><MaterialIcon name="more_horiz" /></span>
                 <span className="sidebar-label">{t.more}</span>
               </button>
             </>
@@ -231,6 +175,30 @@ export default function Sidebar({ currentView, onViewChange, isCollapsed, onTogg
             </>
           )}
         </nav>
+        <div className="sidebar-profile">
+          <div className="profile-avatar-mini" style={{
+            width: '32px',
+            height: '32px',
+            background: 'var(--accent)',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontWeight: '600',
+            fontSize: '14px',
+            flexShrink: 0
+          }}>
+            {user?.name?.[0].toUpperCase() || 'U'}
+          </div>
+          {!isCollapsed && (
+            <div className="profile-info">
+              <span className="profile-name">{user?.name || 'User'}</span>
+              <span className="profile-email">{user?.email || ''}</span>
+            </div>
+          )}
+          {!isCollapsed && <MaterialIcon name="unfold_more" />}
+        </div>
       </aside>
 
       {isMobile && (

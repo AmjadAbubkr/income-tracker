@@ -3,33 +3,9 @@ import { Product, IncomeEntry } from '../types';
 import { formatCurrency } from '../utils/currency';
 import { useLanguage } from '../context/LanguageContext';
 
-// Professional SVG icons
-const TrashIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="3 6 5 6 21 6" />
-    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-    <line x1="10" y1="11" x2="10" y2="17" />
-    <line x1="14" y1="11" x2="14" y2="17" />
-  </svg>
-);
-
-const MinusIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="5" y1="12" x2="19" y2="12" />
-  </svg>
-);
-
-const PlusIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="5" x2="12" y2="19" />
-    <line x1="5" y1="12" x2="19" y2="12" />
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12" />
-  </svg>
+/* ── Inline Material Symbol helper ── */
+const MIcon = ({ name, size = 18 }: { name: string; size?: number }) => (
+  <span className="material-symbols-outlined" style={{ fontSize: size }}>{name}</span>
 );
 
 interface IncomeEntryFormProps {
@@ -68,30 +44,6 @@ export default function IncomeEntryForm({
     });
   };
 
-  const handleQuantityInputChange = (productId: string, value: string) => {
-    if (value === '') {
-      setQuantities((prev) => {
-        const { [productId]: _, ...rest } = prev;
-        return rest;
-      });
-      return;
-    }
-
-    const parsedValue = Number(value);
-    if (Number.isNaN(parsedValue)) {
-      return;
-    }
-
-    const sanitizedValue = Math.max(0, Math.floor(parsedValue));
-    setQuantities((prev) => {
-      if (sanitizedValue === 0) {
-        const { [productId]: _, ...rest } = prev;
-        return rest;
-      }
-      return { ...prev, [productId]: sanitizedValue };
-    });
-  };
-
   const handleConfirm = async (productId: string) => {
     const quantity = quantities[productId] ?? 0;
     if (quantity <= 0) {
@@ -107,169 +59,119 @@ export default function IncomeEntryForm({
     const product = products.find((p) => p.id === productId);
     if (!product) return;
 
-    // Check inventory if it's tracked
     if (product.inventory !== undefined && product.inventory < quantity) {
       alert(t.insufficientStock.replace('{stock}', product.inventory.toString()));
       return;
     }
 
-    const amount = product.price * quantity;
-
     try {
       await onSubmit({
         productId,
         quantity,
-        amount,
+        amount: product.price * quantity,
         date,
         notes: notes.trim() || undefined,
       });
 
-      // Reset quantity for this product only after successful submission
       setQuantities((prev) => {
         const { [productId]: _, ...rest } = prev;
         return rest;
       });
     } catch (error) {
-      console.error('Error submitting income entry:', error);
-      alert(t.failedToRecordIncome || 'Failed to record income. Please try again.');
+      console.error('Error recording income:', error);
     }
   };
 
-  if (products.length === 0) {
-    return (
-      <div className="income-form-empty">
-        <p>{t.noProductsAvailableAddFirst}</p>
-      </div>
-    );
-  }
+  const getStockStatus = (stock: number | undefined) => {
+    if (stock === undefined) return { label: 'In Stock', class: 'status-high' };
+    if (stock <= 0) return { label: 'Out', class: 'status-low' };
+    if (stock < 10) return { label: 'Low', class: 'status-medium' };
+    return { label: 'High', class: 'status-high' };
+  };
 
   return (
-    <div className="income-form">
-      {showTitle && <h2>{t.recordIncome}</h2>}
+    <div className="income-form-v2">
+      {showTitle && <h2 style={{ marginBottom: 'var(--spacing-lg)' }}>{t.recordIncome}</h2>}
 
-      <div className="form-group">
-        <label htmlFor={`${formId}-date`}>{t.date} *</label>
-        <input
-          id={`${formId}-date`}
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          required
-        />
+      <div className="income-form-meta">
+        <div className="filter-group">
+          <label htmlFor={`${formId}-date`}>{t.date}</label>
+          <input
+            id={`${formId}-date`}
+            type="date"
+            className="filter-control"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="filter-group">
+          <label htmlFor={`${formId}-notes`}>{t.notesOptional}</label>
+          <input
+            id={`${formId}-notes`}
+            className="filter-control"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder={t.optionalNotesPlaceholder}
+          />
+        </div>
       </div>
 
-      <div className="form-group">
-        <label htmlFor={`${formId}-notes`}>{t.notesOptional}</label>
-        <textarea
-          id={`${formId}-notes`}
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder={t.optionalNotesPlaceholder}
-          rows={2}
-        />
-      </div>
-
-      <div className="products-grid">
+      <div className="income-form-products">
         {products.map((product) => {
-          const quantity = quantities[product.id] ?? 0;
-          const totalAmount = product.price * quantity;
+          const qty = quantities[product.id] ?? 0;
+          const status = getStockStatus(product.inventory);
 
           return (
-            <div key={product.id} className="product-box">
-              {product.image && (
-                <div className="product-box-image-container">
-                  <img src={product.image} alt={product.name} className="product-box-image" />
+            <div key={product.id} className="product-row-v2" style={{ padding: 'var(--spacing-sm) var(--spacing-md)' }}>
+              <div className="product-cell-main">
+                <div className="product-icon-v2" style={{ width: 40, height: 40 }}>
+                  <MIcon name="inventory_2" size={20} />
                 </div>
-              )}
-              <div className="product-box-header">
-                <h3>{product.name}</h3>
-                <div className="product-box-header-right">
-                  <div className="product-price">{formatCurrency(product.price, currency)}</div>
-                  {onDeleteProduct && (
-                    <button
-                      type="button"
-                      className="btn-delete-product"
-                      onClick={() => {
-                        if (confirm(t.confirmDeleteProduct)) {
-                          onDeleteProduct(product.id);
-                        }
-                      }}
-                      title={t.deleteProduct}
-                    >
-                      <TrashIcon />
-                    </button>
-                  )}
+                <div className="product-info-text">
+                  <span className="product-name-v2">{product.name}</span>
+                  <span className="product-meta-v2">{formatCurrency(product.price, currency)} • <span className={status.class} style={{ background: 'transparent', padding: 0 }}>{status.label}</span></span>
                 </div>
               </div>
-              {product.description && (
-                <p className="product-description">{product.description}</p>
-              )}
 
-              {product.inventory !== undefined && (
-                <div className="inventory-info">
-                  <span className="inventory-label">{t.stock}:</span>
-                  <span className={`inventory-value ${product.inventory <= 5 ? 'low-stock' : ''} ${product.inventory === 0 ? 'out-of-stock' : ''}`}>
-                    {product.inventory}
-                  </span>
-                </div>
-              )}
-
-              <div className="quantity-controls">
-                <button
-                  type="button"
-                  className="btn-quantity btn-minus"
-                  onClick={() => handleQuantityChange(product.id, -1)}
-                  disabled={quantity === 0}
-                >
-                  <span className="icon-minus"><MinusIcon /></span>
+              <div className="qty-control-v2">
+                <button className="qty-btn" onClick={() => handleQuantityChange(product.id, -1)} disabled={qty === 0}>
+                  <MIcon name="remove" size={14} />
                 </button>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  min={0}
-                  step={1}
-                  className="quantity-input"
-                  value={quantity === 0 ? '' : quantity}
-                  onChange={(e) => handleQuantityInputChange(product.id, e.target.value)}
-                  onBlur={(e) => {
-                    if (e.target.value === '') {
-                      handleQuantityInputChange(product.id, '0');
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  className="btn-quantity btn-plus"
-                  onClick={() => handleQuantityChange(product.id, 1)}
-                >
-                  <span className="icon-plus"><PlusIcon /></span>
+                <span className="qty-val">{qty}</span>
+                <button className="qty-btn plus" onClick={() => handleQuantityChange(product.id, 1)}>
+                  <MIcon name="add" size={14} />
                 </button>
               </div>
-
-              {quantity > 0 && (
-                <div className="product-total">
-                  {t.total}: <strong>{formatCurrency(totalAmount, currency)}</strong>
-                </div>
-              )}
 
               <button
-                type="button"
-                className="btn-confirm"
+                className={`btn btn-primary ${qty === 0 ? 'disabled' : ''}`}
+                style={{ padding: '8px 16px', fontSize: 'var(--font-xs)' }}
                 onClick={() => handleConfirm(product.id)}
-                disabled={quantity === 0}
+                disabled={qty === 0}
               >
-                <span className="icon-confirm"><CheckIcon /></span>
                 {t.confirm}
               </button>
+
+              {onDeleteProduct && (
+                <button
+                  type="button"
+                  className="btn-delete-product"
+                  style={{ opacity: 0.5 }}
+                  onClick={() => confirm(t.confirmDeleteProduct) && onDeleteProduct(product.id)}
+                >
+                  <MIcon name="delete" />
+                </button>
+              )}
             </div>
           );
         })}
       </div>
 
       {onCancel && (
-        <div className="form-actions">
-          <button type="button" onClick={onCancel} className="btn btn-secondary">
+        <div className="form-actions" style={{ marginTop: 'var(--spacing-xl)', justifyContent: 'flex-end' }}>
+          <button type="button" onClick={onCancel} className="btn btn-ghost">
             {t.cancel}
           </button>
         </div>

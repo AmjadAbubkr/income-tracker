@@ -1,5 +1,19 @@
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  firstName?: string;
+  lastName?: string;
+  password?: string; // In a real app, this would be hashed. Storing simply here for local demo.
+  avatar?: string;
+  bio?: string;
+  is2FA?: boolean;
+  createdAt: string;
+}
+
 export interface Product {
   id: string;
+  userId?: string;
   name: string;
   price: number;
   description?: string;
@@ -11,6 +25,7 @@ export interface Product {
 
 export interface IncomeEntry {
   id: string;
+  userId?: string;
   productId: string;
   quantity: number;
   amount: number;
@@ -20,6 +35,7 @@ export interface IncomeEntry {
 
 export interface Expense {
   id: string;
+  userId?: string;
   category: string;
   amount: number;
   date: string;
@@ -28,6 +44,7 @@ export interface Expense {
 
 export interface BusinessSubscription {
   id: string;
+  userId?: string;
   name: string;
   amount: number;
   billingCycle: 'monthly' | 'yearly';
@@ -38,6 +55,7 @@ export interface BusinessSubscription {
 
 export interface CustomerSubscription {
   id: string;
+  userId?: string;
   customerName: string;
   serviceName: string;
   amount: number;

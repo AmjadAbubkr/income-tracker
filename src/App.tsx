@@ -14,27 +14,47 @@ import AnalyticsPage from './components/AnalyticsPage';
 import SettingsPage from './components/SettingsPage';
 import ExpensesPage from './components/ExpensesPage';
 import SubscriptionsPage from './components/SubscriptionsPage';
+import LoginPage from './components/auth/LoginPage';
+import RegisterPage from './components/auth/RegisterPage';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
 import './App.css';
 import './mobile.css';
 
 type View = 'dashboard' | 'sales' | 'products' | 'analytics' | 'settings' | 'expenses' | 'subscriptions';
+type AuthView = 'login' | 'register';
 
 function App() {
   const { t } = useLanguage();
+  const { user, isLoading: isAuthLoading } = useAuth();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [incomeEntries, setIncomeEntries] = useState<IncomeEntry[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [businessSubscriptions, setBusinessSubscriptions] = useState<BusinessSubscription[]>([]);
   const [customerSubscriptions, setCustomerSubscriptions] = useState<CustomerSubscription[]>([]);
+
   const [currentView, setCurrentView] = useState<View>('dashboard');
+  const [authView, setAuthView] = useState<AuthView>('login');
+
   const [currency, setCurrency] = useState<string>(currencyStorage.getCurrency());
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const { todayDate, currentMonth } = useCurrentDate();
 
   useEffect(() => {
+    if (!user) {
+      // Clear data if no user
+      setProducts([]);
+      setIncomeEntries([]);
+      setExpenses([]);
+      setBusinessSubscriptions([]);
+      setCustomerSubscriptions([]);
+      return;
+    }
+
     const loadData = async () => {
       const [loadedProducts, loadedEntries, loadedExpenses, loadedBizSubs, loadedCustSubs] = await Promise.all([
         storage.getProducts(),
@@ -53,7 +73,7 @@ function App() {
 
     // Reset daily stats if new day
     dailyStatsStorage.resetIfNewDay();
-  }, []);
+  }, [user]);
 
   // Reset daily stats when day changes
   useEffect(() => {
@@ -68,6 +88,7 @@ function App() {
   // Automatic Subscription Recording
   useEffect(() => {
     const processAutoRecording = async () => {
+      if (!user) return;
       if (businessSubscriptions.length === 0 && customerSubscriptions.length === 0) return;
 
       const today = new Date().toISOString().split('T')[0];
@@ -107,7 +128,7 @@ function App() {
         while (currentSub.status === 'active' && currentSub.nextBillingDate <= today && currentSub.nextBillingDate !== '') {
           newIncomeEntries.push({
             id: crypto.randomUUID(),
-            productId: 'subscription', // Placeholder for subscription-based income
+            productId: 'subscription',
             quantity: 1,
             amount: currentSub.amount,
             date: currentSub.nextBillingDate,
@@ -151,11 +172,10 @@ function App() {
       }
     };
 
-    // Run only after initial data load
-    if (businessSubscriptions.length > 0 || customerSubscriptions.length > 0) {
+    if (user && (businessSubscriptions.length > 0 || customerSubscriptions.length > 0)) {
       processAutoRecording();
     }
-  }, [todayDate, businessSubscriptions.length > 0, customerSubscriptions.length > 0]);
+  }, [todayDate, businessSubscriptions.length > 0, customerSubscriptions.length > 0, user]);
 
   const handleAddProduct = async (productData: Omit<Product, 'id' | 'createdAt'>) => {
     const newProduct: Product = {
@@ -191,10 +211,8 @@ function App() {
     setIncomeEntries(updatedEntries);
     await storage.saveIncomeEntries(updatedEntries);
 
-    // Update daily stats
     dailyStatsStorage.addSale(newEntry.amount, newEntry.quantity);
 
-    // Update inventory if product tracks it
     const product = products.find((p) => p.id === entryData.productId);
     if (product && product.inventory !== undefined) {
       const updatedProducts = products.map((p) => {
@@ -222,42 +240,6 @@ function App() {
     }
   };
 
-  const handleDeleteIncome = async (id: string) => {
-    if (confirm(t.confirmDeleteEntry)) {
-      const entryToDelete = incomeEntries.find((e) => e.id === id);
-      const updatedEntries = incomeEntries.filter((e) => e.id !== id);
-      setIncomeEntries(updatedEntries);
-      await storage.saveIncomeEntries(updatedEntries);
-
-      // Restore inventory if product tracks it
-      if (entryToDelete) {
-        const product = products.find((p) => p.id === entryToDelete.productId);
-        if (product && product.inventory !== undefined) {
-          const updatedProducts = products.map((p) => {
-            if (p.id === entryToDelete.productId) {
-              return {
-                ...p,
-                inventory: (p.inventory || 0) + entryToDelete.quantity,
-              };
-            }
-            return p;
-          });
-          setProducts(updatedProducts);
-          await storage.saveProducts(updatedProducts);
-        }
-
-        // Recalculate daily stats from remaining entries
-        const today = new Date().toISOString().split('T')[0];
-        const todayEntries = updatedEntries.filter((e) => e.date === today);
-        const todayStats = {
-          totalSales: todayEntries.length,
-          totalRevenue: todayEntries.reduce((sum, e) => sum + e.amount, 0),
-          totalItems: todayEntries.reduce((sum, e) => sum + e.quantity, 0),
-        };
-        dailyStatsStorage.updateTodayStats(todayStats);
-      }
-    }
-  };
 
   const handleAddExpense = async (expenseData: Omit<Expense, 'id'>) => {
     const newExpense: Expense = {
@@ -275,7 +257,6 @@ function App() {
     await storage.saveExpenses(updatedExpenses);
   };
 
-  // Business Subscriptions Handlers
   const handleAddBusinessSub = async (subData: Omit<BusinessSubscription, 'id'>) => {
     const newSub: BusinessSubscription = { ...subData, id: crypto.randomUUID() };
     const updated = [...businessSubscriptions, newSub];
@@ -297,7 +278,6 @@ function App() {
     }
   };
 
-  // Customer Subscriptions Handlers
   const handleAddCustomerSub = async (subData: Omit<CustomerSubscription, 'id'>) => {
     const newSub: CustomerSubscription = { ...subData, id: crypto.randomUUID() };
     const updated = [...customerSubscriptions, newSub];
@@ -319,6 +299,20 @@ function App() {
     }
   };
 
+  if (isAuthLoading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg)' }}>
+        <div className="loading-spinner"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return authView === 'login'
+      ? <LoginPage onSwitchMode={() => setAuthView('register')} />
+      : <RegisterPage onSwitchMode={() => setAuthView('login')} />;
+  }
+
   return (
     <div className="app">
       <Sidebar
@@ -333,17 +327,17 @@ function App() {
           onCurrencyChange={handleCurrencyChange}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          onViewChange={(view) => setCurrentView(view as View)}
         />
         <main className="main-content">
           {currentView === 'dashboard' && (
             <Dashboard
               products={products}
               incomeEntries={incomeEntries}
-              onDeleteProduct={handleDeleteProduct}
-              onDeleteIncome={handleDeleteIncome}
+              expenses={expenses}
+              businessSubscriptions={businessSubscriptions}
+              customerSubscriptions={customerSubscriptions}
               currency={currency}
-              todayDate={todayDate}
-              currentMonth={currentMonth}
             />
           )}
           {currentView === 'sales' && (
@@ -414,7 +408,11 @@ export default function Root() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <App />
+        <AuthProvider>
+          <NotificationProvider>
+            <App />
+          </NotificationProvider>
+        </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Income Tracker - Sales Redesign</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1d4ed8", // Blue-700 equivalent for primary actions
+                        "primary-hover": "#1e40af",
+                        "background-light": "#f3f4f6", // Gray-100
+                        "background-dark": "#0f172a", // Slate-900 (deep navy)
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b", // Slate-800
+                        "surface-darker": "#0f172a", // Matches bg for sidebar
+                        "accent-blue": "#3b82f6", // Blue-500
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': "0.75rem",
+                        '2xl': "1rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }.no-scrollbar {
+            -ms-overflow-style: none;scrollbar-width: none;}
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-100 antialiased h-screen flex overflow-hidden selection:bg-primary selection:text-white">
+<aside class="w-64 flex-shrink-0 flex flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-surface-darker transition-colors duration-300">
+<div class="h-20 flex items-center px-6 border-b border-gray-200 dark:border-gray-800">
+<div class="flex items-center gap-3 w-full">
+<div class="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent-blue flex items-center justify-center text-white shadow-lg shadow-primary/20">
+<span class="material-icons-round text-2xl">account_balance_wallet</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-lg leading-tight tracking-tight">Income</span>
+<span class="font-bold text-lg leading-tight tracking-tight text-primary">Tracker</span>
+</div>
+<button class="ml-auto p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 transition-colors">
+<span class="material-icons-round text-sm">chevron_left</span>
+</button>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-all group" href="#">
+<span class="material-icons-round group-hover:text-primary transition-colors">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary dark:text-blue-400 font-semibold transition-all" href="#">
+<span class="material-icons-round">point_of_sale</span>
+<span class="text-sm">Sales</span>
+<div class="w-1.5 h-1.5 rounded-full bg-primary ml-auto"></div>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-all group" href="#">
+<span class="material-icons-round group-hover:text-primary transition-colors">receipt_long</span>
+<span class="font-medium text-sm">Expenses</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-all group" href="#">
+<span class="material-icons-round group-hover:text-primary transition-colors">inventory_2</span>
+<span class="font-medium text-sm">Products</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-all group" href="#">
+<span class="material-icons-round group-hover:text-primary transition-colors">autorenew</span>
+<span class="font-medium text-sm">Subscriptions</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-all group" href="#">
+<span class="material-icons-round group-hover:text-primary transition-colors">analytics</span>
+<span class="font-medium text-sm">Analytics</span>
+</a>
+<div class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-800">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-all group" href="#">
+<span class="material-icons-round group-hover:text-primary transition-colors">settings</span>
+<span class="font-medium text-sm">Settings</span>
+</a>
+</div>
+</nav>
+</aside>
+<main class="flex-1 flex flex-col min-w-0 bg-gray-50 dark:bg-[#0b1120]">
+<header class="h-20 bg-white dark:bg-surface-darker border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 z-10">
+<div class="relative w-96">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+<span class="material-icons-round text-xl">search</span>
+</span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-800 border-none rounded-xl text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-gray-800 transition-all" placeholder="Search products, sales..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<button class="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-xs font-medium transition-colors">
+<span>FCFA XAF</span>
+<span class="material-icons-round text-sm">expand_more</span>
+</button>
+</div>
+<button class="relative p-2 text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+<span class="material-icons-round">notifications</span>
+<span class="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-surface-darker"></span>
+</button>
+<button class="h-9 w-9 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden border border-gray-300 dark:border-gray-600">
+<span class="material-icons-round text-gray-500 dark:text-gray-300">person</span>
+</button>
+</div>
+</header>
+<div class="flex-1 flex overflow-hidden">
+<section class="flex-1 flex flex-col min-w-0 border-r border-gray-200 dark:border-gray-800">
+<div class="p-6 flex flex-col h-full">
+<div class="flex items-center justify-between mb-8">
+<h1 class="text-2xl font-bold text-gray-900 dark:text-white">Sales</h1>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-medium shadow-lg shadow-primary/30 transition-all active:scale-95">
+<span class="material-icons-round text-sm">add</span>
+                                Add Product
+                            </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-500 dark:text-blue-400 border border-blue-500/20 rounded-lg text-sm font-medium transition-all active:scale-95">
+<span class="material-icons-round text-sm">attach_money</span>
+                                Record Income
+                            </button>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-4 mb-6">
+<div class="col-span-8 flex flex-col gap-1">
+<label class="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">Date</label>
+<div class="relative">
+<input class="w-full bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 text-sm focus:ring-2 focus:ring-primary focus:border-transparent dark:text-white" type="date" value="2026-02-18"/>
+</div>
+</div>
+<div class="col-span-4 flex flex-col gap-1">
+<label class="text-xs font-medium text-gray-500 dark:text-gray-400 ml-1">Category</label>
+<select class="w-full bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-4 text-sm focus:ring-2 focus:ring-primary focus:border-transparent dark:text-white">
+<option>All Items</option>
+<option>Stickers</option>
+<option>Electronics</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-4 px-4 py-2 mb-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+<div class="col-span-5">Product</div>
+<div class="col-span-2 text-right">Price</div>
+<div class="col-span-2 text-center">Stock</div>
+<div class="col-span-3 text-center">Quantity</div>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+<div class="group bg-white dark:bg-surface-dark p-3 rounded-xl border border-gray-200 dark:border-gray-700/50 hover:border-primary/50 dark:hover:border-primary/50 shadow-sm hover:shadow-md transition-all">
+<div class="grid grid-cols-12 gap-4 items-center">
+<div class="col-span-5 flex items-center gap-4">
+<div class="h-12 w-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+<span class="material-icons-round text-gray-400 text-xl">image</span>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors">Stickers Clear</h3>
+<p class="text-xs text-gray-500">SKU: STK-001</p>
+</div>
+</div>
+<div class="col-span-2 text-right">
+<span class="text-sm font-medium text-gray-900 dark:text-gray-200">100</span>
+<span class="text-xs text-gray-500">FCFA</span>
+</div>
+<div class="col-span-2 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                        In Stock
+                                    </span>
+</div>
+<div class="col-span-3 flex justify-center">
+<div class="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 shadow-sm hover:text-primary transition-colors">
+<span class="material-icons-round text-sm">remove</span>
+</button>
+<input class="w-10 text-center bg-transparent border-none p-0 text-sm font-medium text-gray-900 dark:text-white focus:ring-0" type="text" value="0"/>
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-primary text-white shadow-sm hover:bg-primary-hover transition-colors">
+<span class="material-icons-round text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="group bg-white dark:bg-surface-dark p-3 rounded-xl border border-gray-200 dark:border-gray-700/50 hover:border-primary/50 dark:hover:border-primary/50 shadow-sm hover:shadow-md transition-all ring-2 ring-primary/20 dark:ring-primary/10">
+<div class="grid grid-cols-12 gap-4 items-center">
+<div class="col-span-5 flex items-center gap-4">
+<div class="h-12 w-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+<span class="material-icons-round text-gray-400 text-xl">inventory_2</span>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors">Something Cool</h3>
+<p class="text-xs text-gray-500">Stock: 8,999,065</p>
+</div>
+</div>
+<div class="col-span-2 text-right">
+<span class="text-sm font-medium text-gray-900 dark:text-gray-200">90</span>
+<span class="text-xs text-gray-500">FCFA</span>
+</div>
+<div class="col-span-2 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                        High
+                                    </span>
+</div>
+<div class="col-span-3 flex justify-center">
+<div class="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 shadow-sm hover:text-primary transition-colors">
+<span class="material-icons-round text-sm">remove</span>
+</button>
+<input class="w-10 text-center bg-transparent border-none p-0 text-sm font-medium text-gray-900 dark:text-white focus:ring-0" type="text" value="1"/>
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-primary text-white shadow-sm hover:bg-primary-hover transition-colors">
+<span class="material-icons-round text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="group bg-white dark:bg-surface-dark p-3 rounded-xl border border-gray-200 dark:border-gray-700/50 hover:border-primary/50 dark:hover:border-primary/50 shadow-sm hover:shadow-md transition-all">
+<div class="grid grid-cols-12 gap-4 items-center">
+<div class="col-span-5 flex items-center gap-4">
+<div class="h-12 w-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+<span class="material-icons-round text-gray-400 text-xl">camera</span>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors">Camera Lens</h3>
+<p class="text-xs text-gray-500">Pro Series</p>
+</div>
+</div>
+<div class="col-span-2 text-right">
+<span class="text-sm font-medium text-gray-900 dark:text-gray-200">200</span>
+<span class="text-xs text-gray-500">FCFA</span>
+</div>
+<div class="col-span-2 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+                                        Low
+                                    </span>
+</div>
+<div class="col-span-3 flex justify-center">
+<div class="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 shadow-sm hover:text-primary transition-colors">
+<span class="material-icons-round text-sm">remove</span>
+</button>
+<input class="w-10 text-center bg-transparent border-none p-0 text-sm font-medium text-gray-900 dark:text-white focus:ring-0" type="text" value="0"/>
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-primary text-white shadow-sm hover:bg-primary-hover transition-colors">
+<span class="material-icons-round text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="group bg-white dark:bg-surface-dark p-3 rounded-xl border border-gray-200 dark:border-gray-700/50 hover:border-primary/50 dark:hover:border-primary/50 shadow-sm hover:shadow-md transition-all">
+<div class="grid grid-cols-12 gap-4 items-center">
+<div class="col-span-5 flex items-center gap-4">
+<div class="h-12 w-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+<span class="material-icons-round text-gray-400 text-xl">headphones</span>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors">Headphones</h3>
+<p class="text-xs text-gray-500">Audio</p>
+</div>
+</div>
+<div class="col-span-2 text-right">
+<span class="text-sm font-medium text-gray-900 dark:text-gray-200">150</span>
+<span class="text-xs text-gray-500">FCFA</span>
+</div>
+<div class="col-span-2 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+                                        Out
+                                    </span>
+</div>
+<div class="col-span-3 flex justify-center">
+<div class="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1 opacity-50 cursor-not-allowed">
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-white dark:bg-gray-700 text-gray-400 shadow-sm" disabled="">
+<span class="material-icons-round text-sm">remove</span>
+</button>
+<input class="w-10 text-center bg-transparent border-none p-0 text-sm font-medium text-gray-500 focus:ring-0" disabled="" type="text" value="0"/>
+<button class="w-7 h-7 flex items-center justify-center rounded-md bg-gray-300 dark:bg-gray-600 text-gray-500 shadow-sm" disabled="">
+<span class="material-icons-round text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<aside class="w-96 bg-white dark:bg-surface-darker border-l border-gray-200 dark:border-gray-800 flex flex-col z-10 shadow-xl">
+<div class="p-6 flex-1 flex flex-col">
+<h2 class="text-lg font-bold text-gray-900 dark:text-white mb-6">Current Sale</h2>
+<div class="mb-6">
+<label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Notes (Optional)</label>
+<textarea class="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent resize-none h-24" placeholder="Add notes for this sale..."></textarea>
+</div>
+<div class="flex-1 overflow-y-auto mb-6 pr-2">
+<div class="space-y-4">
+<div class="flex justify-between items-start">
+<div class="flex gap-3">
+<div class="h-10 w-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
+<span class="material-icons-round text-gray-400 text-sm">inventory_2</span>
+</div>
+<div>
+<p class="text-sm font-medium text-gray-900 dark:text-white">Something Cool</p>
+<p class="text-xs text-gray-500">1 x 90 FCFA</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-medium text-gray-900 dark:text-white">90 FCFA</p>
+<button class="text-red-400 hover:text-red-500 text-xs mt-1">Remove</button>
+</div>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-200 dark:border-gray-800 pt-4 space-y-3">
+<div class="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+<span>Subtotal</span>
+<span>90 FCFA</span>
+</div>
+<div class="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+<span>Tax (0%)</span>
+<span>0 FCFA</span>
+</div>
+<div class="flex justify-between text-lg font-bold text-gray-900 dark:text-white pt-2 border-t border-gray-200 dark:border-gray-800 border-dashed">
+<span>Total</span>
+<span class="text-primary">90 FCFA</span>
+</div>
+</div>
+<button class="w-full mt-6 py-3.5 bg-primary hover:bg-primary-hover text-white rounded-xl font-semibold shadow-lg shadow-primary/25 transition-all transform active:scale-[0.98] flex justify-center items-center gap-2">
+<span>Complete Sale</span>
+<span class="material-icons-round text-sm">arrow_forward</span>
+</button>
+</div>
+</aside>
+</div>
+</main>
+
+</body></html>

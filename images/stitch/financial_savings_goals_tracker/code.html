@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Financial Savings Goals Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#46ec13",
+              "primary-dark": "#36b80f", // Darker shade for better text contrast if needed on light bg, or hover states
+              "background-light": "#f6f8f6",
+              "background-dark": "#142210",
+              "card-light": "#ffffff",
+              "card-dark": "#1a2c15",
+              "text-main": "#131811",
+              "text-muted": "#6b8961",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "0.25rem",
+              "lg": "0.5rem",
+              "xl": "0.75rem",
+              "2xl": "1rem",
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-main font-display antialiased selection:bg-primary selection:text-black">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Main Layout Container -->
+<div class="layout-container flex h-full grow flex-col">
+<!-- Centered Content Wrapper -->
+<div class="flex flex-1 justify-center py-5 px-4 md:px-8 lg:px-12 xl:px-40">
+<div class="layout-content-container flex flex-col max-w-[1200px] flex-1">
+<!-- Header / Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#dee6db] pb-5 mb-8">
+<div class="flex items-center gap-4 text-text-main">
+<div class="size-10 bg-primary rounded-xl flex items-center justify-center text-black shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
+</div>
+<h2 class="text-text-main text-xl font-bold leading-tight tracking-[-0.015em]">FinTrack</h2>
+</div>
+<nav class="hidden md:flex items-center gap-9">
+<a class="text-text-muted hover:text-text-main transition-colors text-sm font-medium leading-normal" href="#">Dashboard</a>
+<a class="text-text-muted hover:text-text-main transition-colors text-sm font-medium leading-normal" href="#">Transactions</a>
+<a class="text-text-main text-sm font-bold leading-normal relative after:content-[''] after:absolute after:-bottom-6 after:left-0 after:w-full after:h-1 after:bg-primary after:rounded-t-sm" href="#">Savings Goals</a>
+<a class="text-text-muted hover:text-text-main transition-colors text-sm font-medium leading-normal" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="size-10 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors text-text-main">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10 border-2 border-white shadow-sm" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDU1JUhFCTf0YDIsQXscsUBIuB7OTUAsiWuIOBU29DPKqyrg3O-rKMW416jc2GlI1M-FYqOKIml8C12i8jKDHIgpicb8exKeE-5oclh59uEMv3ZXaYJwCnfaD0tRSHcF-qU7IUIkMHif_THyVtli54L8tb32jjUAkJgTSCBu2lQWpy3s4aXdb8ybTJOohOQV3Q41H39kqd-1cNssPnV99aayEf7iHGwXPnHTa5yXgGqVpCqrsS6oQWOQBgxcG_2UniiP7EiI9j5RkA");'></div>
+</div>
+</header>
+<!-- Page Title & Actions -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div class="flex flex-col gap-2">
+<h1 class="text-text-main text-4xl font-black leading-tight tracking-[-0.033em]">Your Savings Goals</h1>
+<p class="text-text-muted text-lg font-medium">Track your dreams and build your future.</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right hidden sm:block mr-2">
+<p class="text-xs font-semibold text-text-muted uppercase tracking-wider">Total Saved</p>
+<p class="text-2xl font-bold text-text-main">$12,450</p>
+</div>
+<button class="group flex cursor-pointer items-center justify-center gap-2 rounded-xl h-12 px-6 bg-text-main hover:bg-black text-white transition-all shadow-lg hover:shadow-xl active:scale-95">
+<span class="material-symbols-outlined text-primary group-hover:text-white transition-colors">add_circle</span>
+<span class="text-sm font-bold leading-normal">Add New Goal</span>
+</button>
+</div>
+</div>
+<!-- Summary Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+<!-- Total Savings -->
+<div class="flex flex-col gap-1 rounded-2xl p-6 bg-white border border-[#dee6db] shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute right-0 top-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-primary">savings</span>
+</div>
+<p class="text-text-muted text-sm font-semibold uppercase tracking-wider">Total Balance</p>
+<div class="flex items-baseline gap-2">
+<p class="text-text-main text-3xl font-bold leading-tight">$12,450</p>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-primary/20 text-green-800">
+<span class="material-symbols-outlined text-[14px] mr-0.5">trending_up</span> 12%
+                                </span>
+</div>
+<p class="text-text-muted text-sm mt-2">+$1,200 this month</p>
+</div>
+<!-- Monthly Contribution -->
+<div class="flex flex-col gap-1 rounded-2xl p-6 bg-white border border-[#dee6db] shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute right-0 top-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-blue-500">calendar_month</span>
+</div>
+<p class="text-text-muted text-sm font-semibold uppercase tracking-wider">Monthly Goal</p>
+<div class="flex items-baseline gap-2">
+<p class="text-text-main text-3xl font-bold leading-tight">$850</p>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-blue-100 text-blue-800">
+                                    On Track
+                                </span>
+</div>
+<p class="text-text-muted text-sm mt-2">Next auto-save: Nov 1st</p>
+</div>
+<!-- Goals Completed -->
+<div class="flex flex-col gap-1 rounded-2xl p-6 bg-white border border-[#dee6db] shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute right-0 top-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-yellow-500">emoji_events</span>
+</div>
+<p class="text-text-muted text-sm font-semibold uppercase tracking-wider">Completed</p>
+<div class="flex items-baseline gap-2">
+<p class="text-text-main text-3xl font-bold leading-tight">2</p>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-yellow-100 text-yellow-800">
+                                    Awesome!
+                                </span>
+</div>
+<p class="text-text-muted text-sm mt-2">Latest: New Laptop ($2.5k)</p>
+</div>
+</div>
+<!-- Goals Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Goal Card 1: Emergency Fund (High Priority) -->
+<div class="flex flex-col rounded-2xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all border border-transparent hover:border-primary/30 group overflow-hidden">
+<!-- Image Header -->
+<div class="h-32 w-full bg-cover bg-center relative" data-alt="Stack of coins representing savings" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAmgAvTnw00L_dQHiAUJNVgpjfgdootHtus8LLdHJ42vKVQlwSEWYWezafUaD-4GyIKPzkk2azG3_KoR54WWCQYMaj6ZQgSRBYsV7w-XXP_sZ1_OhRhnnUPdPmqrA5_lN0rnf8s6zp1PwiWYV2JilThPKOGFXVMXSKuRfPMFv-mE41tYhZKl3prb2hjAaFZOcMmEJiLbw15kLXAuMmxo9UotaP9mh2LUfTwdiYKRhN4-FS2cqo4ykCtUV15pOROENccHetX-cefMmU");'>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-3 left-4 text-white">
+<div class="inline-flex items-center gap-1 bg-primary text-black text-xs font-bold px-2 py-1 rounded mb-1">
+<span class="material-symbols-outlined text-[14px]">priority_high</span> Priority
+                                    </div>
+<h3 class="text-lg font-bold">Emergency Fund</h3>
+</div>
+<button class="absolute top-3 right-3 size-8 bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-colors">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+<div class="p-5 flex flex-col gap-4 flex-1">
+<!-- Progress Section -->
+<div class="flex items-center gap-4">
+<!-- Circular Progress -->
+<div class="relative size-16 shrink-0">
+<svg class="size-full -rotate-90" viewbox="0 0 36 36">
+<!-- Background Circle -->
+<path class="text-gray-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<!-- Progress Circle -->
+<path class="text-primary drop-shadow-[0_0_4px_rgba(70,236,19,0.4)]" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="75, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-text-main">
+                                            75%
+                                        </div>
+</div>
+<div class="flex flex-col">
+<span class="text-2xl font-bold text-text-main tracking-tight">$7,500</span>
+<span class="text-xs font-medium text-text-muted">of $10,000 goal</span>
+</div>
+</div>
+<!-- Details -->
+<div class="space-y-2 mt-1">
+<div class="flex items-center justify-between text-sm">
+<span class="text-text-muted flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Target Date</span>
+<span class="font-semibold text-text-main">Nov 2024</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<span class="text-text-muted flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">trending_up</span> Monthly</span>
+<span class="font-semibold text-text-main">+$500/mo</span>
+</div>
+</div>
+<!-- Action -->
+<div class="mt-auto pt-4 border-t border-[#f1f4f0] flex gap-2">
+<button class="flex-1 h-9 rounded-lg bg-text-main text-white text-sm font-medium hover:bg-black transition-colors">Details</button>
+<button class="flex-1 h-9 rounded-lg bg-primary hover:bg-primary-dark text-text-main text-sm font-bold transition-colors shadow-sm flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[18px]">add</span> Contribute
+                                    </button>
+</div>
+</div>
+</div>
+<!-- Goal Card 2: Dream Vacation -->
+<div class="flex flex-col rounded-2xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all border border-transparent hover:border-primary/30 group overflow-hidden">
+<!-- Image Header -->
+<div class="h-32 w-full bg-cover bg-center relative" data-alt="Scenic view of mountains and lake for vacation" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDVV0JzyVXaV7U13Wt9BMtcSV3ccG7J8QX9eb_o07lJf5ETbL-l1C577WAmRO1fvq2qgOirV5IlfagAtnVsXYE5oAupBCILNYIXLAIy2JW7rQwSPLFA_4FTRstSt7IpteddZNNZiegfLKsxC6XfmNaYehiHbOxlA9YePFSBXi2CDGI2pcvqHV33Mz3gzaZ6G-a9iimWnedCGvVvNoyInXiAVDBQPZJDI139RJ3e_sgnzZ2vSb7qu5SiSLr4vAx0Dm1z-2xcbEgd_Xs");'>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-3 left-4 text-white">
+<h3 class="text-lg font-bold">Dream Vacation</h3>
+</div>
+<button class="absolute top-3 right-3 size-8 bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-colors">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+<div class="p-5 flex flex-col gap-4 flex-1">
+<!-- Progress Section -->
+<div class="flex items-center gap-4">
+<!-- Circular Progress -->
+<div class="relative size-16 shrink-0">
+<svg class="size-full -rotate-90" viewbox="0 0 36 36">
+<path class="text-gray-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-primary drop-shadow-[0_0_4px_rgba(70,236,19,0.4)]" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="20, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-text-main">
+                                            20%
+                                        </div>
+</div>
+<div class="flex flex-col">
+<span class="text-2xl font-bold text-text-main tracking-tight">$1,000</span>
+<span class="text-xs font-medium text-text-muted">of $5,000 goal</span>
+</div>
+</div>
+<!-- Details -->
+<div class="space-y-2 mt-1">
+<div class="flex items-center justify-between text-sm">
+<span class="text-text-muted flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Target Date</span>
+<span class="font-semibold text-text-main">Jun 2025</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<span class="text-text-muted flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">trending_up</span> Monthly</span>
+<span class="font-semibold text-text-main">+$200/mo</span>
+</div>
+</div>
+<!-- Action -->
+<div class="mt-auto pt-4 border-t border-[#f1f4f0] flex gap-2">
+<button class="flex-1 h-9 rounded-lg bg-text-main text-white text-sm font-medium hover:bg-black transition-colors">Details</button>
+<button class="flex-1 h-9 rounded-lg bg-primary hover:bg-primary-dark text-text-main text-sm font-bold transition-colors shadow-sm flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[18px]">add</span> Contribute
+                                    </button>
+</div>
+</div>
+</div>
+<!-- Goal Card 3: New Car -->
+<div class="flex flex-col rounded-2xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all border border-transparent hover:border-primary/30 group overflow-hidden">
+<!-- Image Header -->
+<div class="h-32 w-full bg-cover bg-center relative" data-alt="Sleek modern car dashboard close up" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCC4A_Cb0kMly7V2pXrlD9GEpezOnHeO3H3NoD5CMwd5iPK_chZHQ4OjwQuYYCrD94couJhELSy3s_v1rckWRqP9xMWWKIyGs7NvOzKVXCNTZMYOeZsibtqPP5hP_IEYBFljJs44c0EYi_j0cKLudhS8W87SRJdmitkBnE0rL4vRjasRhQm9v7Ya9I_P9MNO0XZomLmZ04A2la1NV2kxv2MDFKGxrjX_x3psRTOAqD9o9WWFpOV9-6MF5PQYlgeg_zqDlcEpJUKQH8");'>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-3 left-4 text-white">
+<h3 class="text-lg font-bold">New Car</h3>
+</div>
+<button class="absolute top-3 right-3 size-8 bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-colors">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+<div class="p-5 flex flex-col gap-4 flex-1">
+<!-- Progress Section -->
+<div class="flex items-center gap-4">
+<!-- Circular Progress -->
+<div class="relative size-16 shrink-0">
+<svg class="size-full -rotate-90" viewbox="0 0 36 36">
+<path class="text-gray-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-primary drop-shadow-[0_0_4px_rgba(70,236,19,0.4)]" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="45, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-text-main">
+                                            45%
+                                        </div>
+</div>
+<div class="flex flex-col">
+<span class="text-2xl font-bold text-text-main tracking-tight">$13,500</span>
+<span class="text-xs font-medium text-text-muted">of $30,000 goal</span>
+</div>
+</div>
+<!-- Details -->
+<div class="space-y-2 mt-1">
+<div class="flex items-center justify-between text-sm">
+<span class="text-text-muted flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Target Date</span>
+<span class="font-semibold text-text-main">Dec 2026</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<span class="text-text-muted flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">trending_up</span> Monthly</span>
+<span class="font-semibold text-text-main">+$450/mo</span>
+</div>
+</div>
+<!-- Action -->
+<div class="mt-auto pt-4 border-t border-[#f1f4f0] flex gap-2">
+<button class="flex-1 h-9 rounded-lg bg-text-main text-white text-sm font-medium hover:bg-black transition-colors">Details</button>
+<button class="flex-1 h-9 rounded-lg bg-primary hover:bg-primary-dark text-text-main text-sm font-bold transition-colors shadow-sm flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[18px]">add</span> Contribute
+                                    </button>
+</div>
+</div>
+</div>
+<!-- Goal Card 4: Home Renovation (Newly Added) -->
+<div class="flex flex-col rounded-2xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all border border-transparent hover:border-primary/30 group overflow-hidden">
+<!-- Image Header -->
+<div class="h-32 w-full bg-cover bg-center relative" data-alt="Modern interior design with architectural plans" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAeRO0HuLAgoW2oh20jjDiHjgDgd6aLGEmHAWQx8c4k8WX5XjJpIyWvX8yRrnlhSaBTqUkL1B7C90rpBaio8DfP5ntMa_564SKvG8sgRRmTi9YT8wrcC_T-16Kxr0_mIQ2ookID-WOyTz1Fgo8QAvJvJGb9nAYMmnM_WbbtQvbmIeZTXY2vcx0jgJCDgfdoJ3hzEITuYkxfBvGvzjQoDNuYBZfA7349xucZ2F9I4ZOuforNbjziLljqNPv5AM951zmzYu6TK3uAFZA");'>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-3 left-4 text-white">
+<div class="inline-flex items-center gap-1 bg-white/20 backdrop-blur-md text-white border border-white/20 text-xs font-bold px-2 py-1 rounded mb-1">
+                                        New
+                                    </div>
+<h3 class="text-lg font-bold">Kitchen Reno</h3>
+</div>
+<button class="absolute top-3 right-3 size-8 bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-colors">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+<div class="p-5 flex flex-col gap-4 flex-1">
+<!-- Progress Section -->
+<div class="flex items-center gap-4">
+<!-- Circular Progress -->
+<div class="relative size-16 shrink-0">
+<svg class="size-full -rotate-90" viewbox="0 0 36 36">
+<path class="text-gray-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-primary drop-shadow-[0_0_4px_rgba(70,236,19,0.4)]" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="5, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-text-main">
+                                            5%
+                                        </div>
+</div>
+<div class="flex flex-col">
+<span class="text-2xl font-bold text-text-main tracking-tight">$2,000</span>
+<span class="text-xs font-medium text-text-muted">of $40,000 goal</span>
+</div>
+</div>
+<!-- Details -->
+<div class="space-y-2 mt-1">
+<div class="flex items-center justify-between text-sm">
+<span class="text-text-muted flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">calendar_today</span> Target Date</span>
+<span class="font-semibold text-text-main">Jan 2028</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<span class="text-text-muted flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">trending_up</span> Monthly</span>
+<span class="font-semibold text-text-main text-orange-600 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">warning</span> Setup Auto-save
+                                        </span>
+</div>
+</div>
+<!-- Action -->
+<div class="mt-auto pt-4 border-t border-[#f1f4f0] flex gap-2">
+<button class="flex-1 h-9 rounded-lg bg-text-main text-white text-sm font-medium hover:bg-black transition-colors">Details</button>
+<button class="flex-1 h-9 rounded-lg bg-primary hover:bg-primary-dark text-text-main text-sm font-bold transition-colors shadow-sm flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[18px]">add</span> Contribute
+                                    </button>
+</div>
+</div>
+</div>
+<!-- Add New Goal Card (Ghost Card) -->
+<div class="flex flex-col rounded-2xl border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5 transition-all p-8 items-center justify-center gap-4 text-center cursor-pointer min-h-[300px] group">
+<div class="size-16 rounded-full bg-gray-100 group-hover:bg-primary/20 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-3xl text-gray-400 group-hover:text-primary-dark">add</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-text-main">Create New Goal</h3>
+<p class="text-text-muted text-sm mt-1">Start saving for something special.</p>
+</div>
+</div>
+</div>
+<!-- Completed Goals Section (Accordion Style) -->
+<div class="mt-12">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold text-text-main">Completed Goals</h3>
+<button class="text-sm font-medium text-text-muted hover:text-text-main flex items-center gap-1">
+                                View All <span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+<div class="bg-white rounded-2xl border border-[#dee6db] overflow-hidden">
+<div class="flex items-center p-4 border-b border-[#f1f4f0] last:border-0 hover:bg-background-light transition-colors cursor-pointer">
+<div class="size-10 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+<span class="material-symbols-outlined text-green-700">check_circle</span>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-text-main">New Laptop</h4>
+<p class="text-xs text-text-muted">Achieved on Oct 12, 2023</p>
+</div>
+<div class="text-right mr-4">
+<p class="font-bold text-text-main">$2,500</p>
+<p class="text-xs text-text-muted">Saved</p>
+</div>
+<span class="material-symbols-outlined text-gray-400">chevron_right</span>
+</div>
+<div class="flex items-center p-4 border-b border-[#f1f4f0] last:border-0 hover:bg-background-light transition-colors cursor-pointer">
+<div class="size-10 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+<span class="material-symbols-outlined text-green-700">check_circle</span>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-text-main">Holiday Gifts 2023</h4>
+<p class="text-xs text-text-muted">Achieved on Dec 01, 2023</p>
+</div>
+<div class="text-right mr-4">
+<p class="font-bold text-text-main">$800</p>
+<p class="text-xs text-text-muted">Saved</p>
+</div>
+<span class="material-symbols-outlined text-gray-400">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

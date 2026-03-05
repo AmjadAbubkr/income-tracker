@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile and App Settings - FinanceTracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1152d4",
+                        "primary-hover": "#0e44b3",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "card-dark": "#18202f",
+                        "input-dark": "#232b3c",
+                        "border-dark": "#2e374a",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased min-h-screen flex flex-col">
+<!-- Main Layout Container -->
+<div class="flex flex-1 min-h-screen">
+<!-- Sidebar Navigation (Hidden on Mobile, simplified for this view) -->
+<aside class="hidden lg:flex w-64 flex-col border-r border-border-dark bg-background-dark sticky top-0 h-screen overflow-y-auto">
+<div class="p-6 flex items-center gap-3">
+<div class="size-8 text-primary">
+<svg class="w-full h-full" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
+</svg>
+</div>
+<h1 class="font-bold text-xl tracking-tight">FinanceTracker</h1>
+</div>
+<nav class="flex-1 px-4 py-4 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-card-dark transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-card-dark transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="text-sm font-medium">Transactions</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-card-dark transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">pie_chart</span>
+<span class="text-sm font-medium">Reports</span>
+</a>
+<div class="h-px bg-border-dark my-2 mx-3"></div>
+<div class="px-3 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Account</div>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px] fill-current">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-border-dark">
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-card-dark cursor-pointer transition-colors">
+<div class="size-8 rounded-full bg-slate-700 bg-cover bg-center" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCzvNL5VCFG8hF1tavArTH-6BiIuOn-ncfXYUzzvXxaq4W32kZIrOGphrVgsVnO9d78nfMxWml_ALYaVwMNPZsloi5h1ADdl0s1enEB93scUsCQXs4WYBg_XL0ftZd19WxHHHKqM-YPUnvLtiTWVahw1K_0bb0ZA9eOIuGZeEiP55B7-UajV9joaVFN5CUSWJzTCPrFMYcvOF0Mn51wVPk_-_jHbbeNJtmft6CvP8CzYz7n3f_OXVR7peAfX2ltK2IW_egbpQ38jdE");'></div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-medium text-white truncate">John Doe</p>
+<p class="text-xs text-slate-400 truncate">john@example.com</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-screen overflow-y-auto">
+<!-- Mobile Header -->
+<header class="lg:hidden flex items-center justify-between p-4 border-b border-border-dark bg-background-dark sticky top-0 z-20">
+<div class="flex items-center gap-2 text-primary">
+<svg class="size-6" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
+</svg>
+<span class="font-bold text-white">FinanceTracker</span>
+</div>
+<button class="text-white">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-8 lg:p-12">
+<div class="mb-8 md:mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight mb-2">User Settings &amp; Profile</h1>
+<p class="text-slate-400">Manage your account details and application preferences.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white bg-transparent hover:bg-card-dark rounded-lg transition-colors border border-transparent hover:border-border-dark">Cancel</button>
+<button class="px-5 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-lg transition-colors shadow-lg shadow-primary/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                            Save Changes
+                        </button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Column: Navigation/Summary (Optional, keeping it single col stack for clarity on mobile/tablet, side-by-side on large) -->
+<div class="lg:col-span-3 space-y-8">
+<!-- Section 1: Profile Information -->
+<section class="bg-card-dark rounded-xl border border-border-dark overflow-hidden">
+<div class="p-6 md:p-8 border-b border-border-dark">
+<h2 class="text-xl font-bold text-white mb-1">Profile Information</h2>
+<p class="text-sm text-slate-400">Update your photo and personal details.</p>
+</div>
+<div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8">
+<div class="flex flex-col items-center gap-4">
+<div class="relative group cursor-pointer">
+<div class="size-32 rounded-full bg-slate-700 bg-cover bg-center border-4 border-input-dark shadow-xl" data-alt="Profile picture of John Doe" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCWKm2TS3FkuCaoRLA8Oo1JdbkyZsaOTOgF4O0loFn3heKgP1eX6SdNA68cR0586ozPF24BR0OmP9pA6l41p6rXu5FwQYaApMlIicqen44mlwk993BMKMXAWi3hD2GUugtADa4vYLLIx6KBSiDIr2B8Bu747E0uZoSkJ9_p8bRNkPjVtn4AFC9cOAs5yrZWkkR-FkHQcUdwINDXQ_Bx-rM3kVshXgVWKTMNrRWCLWzCt64TxJwuWedhgDz8eH2W3lgwVq3mh6Qp3sw");'></div>
+<div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white">edit</span>
+</div>
+</div>
+<button class="text-sm text-primary font-medium hover:text-primary-hover hover:underline">Change Avatar</button>
+</div>
+<div class="space-y-5 max-w-xl">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+<div class="space-y-1.5">
+<label class="text-sm font-medium text-slate-300" for="firstName">First Name</label>
+<input class="w-full bg-input-dark border-border-dark rounded-lg text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary placeholder-slate-500 transition-shadow" id="firstName" type="text" value="John"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-medium text-slate-300" for="lastName">Last Name</label>
+<input class="w-full bg-input-dark border-border-dark rounded-lg text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary placeholder-slate-500 transition-shadow" id="lastName" type="text" value="Doe"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-medium text-slate-300" for="email">Email Address</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-[20px]">mail</span>
+<input class="w-full bg-input-dark border-border-dark rounded-lg text-white pl-10 pr-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary placeholder-slate-500 transition-shadow" id="email" type="email" value="john.doe@example.com"/>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-medium text-slate-300" for="bio">Bio</label>
+<textarea class="w-full bg-input-dark border-border-dark rounded-lg text-white px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary placeholder-slate-500 transition-shadow resize-none" id="bio" rows="3">Product Designer based in San Francisco.</textarea>
+<p class="text-xs text-slate-500 text-right">0/150</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Account Security -->
+<section class="bg-card-dark rounded-xl border border-border-dark overflow-hidden">
+<div class="p-6 md:p-8 border-b border-border-dark">
+<h2 class="text-xl font-bold text-white mb-1">Account Security</h2>
+<p class="text-sm text-slate-400">Manage your password and security settings.</p>
+</div>
+<div class="p-6 md:p-8 flex flex-col gap-6">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border-dark/50">
+<div>
+<h3 class="text-base font-semibold text-white">Password</h3>
+<p class="text-sm text-slate-400 mt-1">Last changed 3 months ago</p>
+</div>
+<button class="px-4 py-2 text-sm font-medium text-white bg-input-dark border border-border-dark rounded-lg hover:bg-border-dark transition-colors">Change Password</button>
+</div>
+<div class="flex items-center justify-between gap-4">
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<h3 class="text-base font-semibold text-white">Two-Factor Authentication</h3>
+<span class="bg-green-500/10 text-green-400 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide border border-green-500/20">Enabled</span>
+</div>
+<p class="text-sm text-slate-400">Add an extra layer of security to your account.</p>
+</div>
+<!-- Toggle Switch -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Section 3: Preferences -->
+<section class="bg-card-dark rounded-xl border border-border-dark overflow-hidden">
+<div class="p-6 md:p-8 border-b border-border-dark">
+<h2 class="text-xl font-bold text-white mb-1">Preferences</h2>
+<p class="text-sm text-slate-400">Customize your application experience.</p>
+</div>
+<div class="p-6 md:p-8 flex flex-col gap-6 max-w-2xl">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div class="space-y-1.5">
+<label class="text-sm font-medium text-slate-300" for="currency">Default Currency</label>
+<div class="relative">
+<select class="w-full bg-input-dark border-border-dark rounded-lg text-white pl-4 pr-10 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary appearance-none cursor-pointer" id="currency">
+<option value="USD">USD - US Dollar</option>
+<option value="EUR">EUR - Euro</option>
+<option value="GBP">GBP - British Pound</option>
+<option value="JPY">JPY - Japanese Yen</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-medium text-slate-300" for="language">Language</label>
+<div class="relative">
+<select class="w-full bg-input-dark border-border-dark rounded-lg text-white pl-4 pr-10 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary appearance-none cursor-pointer" id="language">
+<option value="en">English (US)</option>
+<option value="es">Spanish</option>
+<option value="fr">French</option>
+<option value="de">German</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<div class="pt-4 border-t border-border-dark/50 space-y-4">
+<h3 class="text-sm font-semibold text-white uppercase tracking-wider text-slate-500">Notifications</h3>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-medium text-white">Email Summaries</p>
+<p class="text-xs text-slate-400">Receive weekly reports of your finances.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-medium text-white">Push Notifications</p>
+<p class="text-xs text-slate-400">Get alerts for large transactions.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-9 h-5 bg-slate-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<div class="pt-4 border-t border-border-dark/50 space-y-4">
+<h3 class="text-sm font-semibold text-white uppercase tracking-wider text-slate-500">Appearance</h3>
+<div class="flex gap-4 p-1 bg-input-dark rounded-lg w-fit border border-border-dark">
+<button class="flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">light_mode</span>
+                                            Light
+                                        </button>
+<button class="flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium bg-border-dark text-white shadow-sm transition-colors ring-1 ring-white/10">
+<span class="material-symbols-outlined text-[18px]">dark_mode</span>
+                                            Dark
+                                        </button>
+<button class="flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">computer</span>
+                                            System
+                                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Danger Zone -->
+<section class="bg-card-dark rounded-xl border border-red-900/30 overflow-hidden">
+<div class="p-6 md:p-8">
+<h2 class="text-lg font-bold text-red-500 mb-1">Danger Zone</h2>
+<p class="text-sm text-slate-400 mb-6">Once you delete your account, there is no going back. Please be certain.</p>
+<button class="px-4 py-2 text-sm font-medium text-red-500 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 rounded-lg transition-colors">Delete Account</button>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

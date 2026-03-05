@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Monthly Budget Planning &amp; Tracking</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1152d4",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-white antialiased min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<nav class="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex h-16 items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="flex size-8 items-center justify-center rounded-lg bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+</div>
+<span class="text-xl font-bold tracking-tight">BudgetTracker</span>
+</div>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-white transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-primary dark:text-white" href="#">Budget Planning</a>
+<a class="text-sm font-medium text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-white transition-colors" href="#">Transactions</a>
+<a class="text-sm font-medium text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-white transition-colors" href="#">Reports</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="relative rounded-full p-1 text-gray-400 hover:text-gray-500 dark:hover:text-white">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-[#101622]"></span>
+</button>
+<div class="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 bg-cover bg-center ring-2 ring-white dark:ring-gray-800" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAaZV8lRXHGmydEoEGIKQbBxNsNLfVO1aiWZ8a1zxx-wwfmIDIgn5H0C7e7Xtfxy_WMPlyx482p5zCvvue-FknM_uDc3zvMTmqzWx7yAIOBnO5Iymnd4yIKEfpejt326t-JChiN0h7BBnZvpAZDCkd9i1dnOxmaguWyLnGYVxk24S6YFZLS319fW1DDyMPcGAOfIWf2sY32Dh8BKIBIO5TVrCay4UzBcTNF01rpsPFCbDbyjJPtbDDLBILvbtR2W3JVIOH9ivUvOtY");'></div>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Page Header -->
+<header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div>
+<h1 class="text-3xl font-bold text-gray-900 dark:text-white">Budget Planning</h1>
+<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your spending limits for October 2023</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative">
+<button class="flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a202c] px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800">
+<span class="material-symbols-outlined text-[20px]">calendar_month</span>
+                        October 2023
+                        <span class="material-symbols-outlined text-[20px]">expand_more</span>
+</button>
+</div>
+<button class="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white shadow-md shadow-primary/20 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-[#101622] transition-all">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    Set New Budget
+                </button>
+</div>
+</header>
+<!-- Summary Dashboard -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+<!-- Card 1: Total Budget Health -->
+<div class="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#151b28] p-6 shadow-sm">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Budget</p>
+<h3 class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">$3,500.00</h3>
+</div>
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-500/10 text-green-600 dark:text-green-400">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-2 text-sm">
+<span class="flex items-center font-medium text-green-600 dark:text-green-400">
+<span class="material-symbols-outlined text-base">trending_up</span>
+                        5%
+                    </span>
+<span class="text-gray-500 dark:text-gray-400">increase from last month</span>
+</div>
+</div>
+<!-- Card 2: Total Spent -->
+<div class="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#151b28] p-6 shadow-sm">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Spent</p>
+<h3 class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">$2,450.00</h3>
+</div>
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+</div>
+<div class="mt-4 w-full">
+<div class="flex justify-between text-xs mb-1">
+<span class="text-gray-500 dark:text-gray-400">70% used</span>
+</div>
+<div class="h-2 w-full rounded-full bg-gray-100 dark:bg-gray-800">
+<div class="h-2 rounded-full bg-primary" style="width: 70%"></div>
+</div>
+</div>
+</div>
+<!-- Card 3: Remaining -->
+<div class="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#151b28] p-6 shadow-sm">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Remaining to Spend</p>
+<h3 class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">$1,050.00</h3>
+</div>
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400">
+<span class="material-symbols-outlined">savings</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-2 text-sm">
+<span class="text-gray-500 dark:text-gray-400">Daily average recommended:</span>
+<span class="font-medium text-gray-900 dark:text-white">$75.00</span>
+</div>
+</div>
+</div>
+<!-- Section Title -->
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-xl font-bold text-gray-900 dark:text-white">Category Breakdown</h2>
+<div class="flex items-center gap-2">
+<button class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+<button class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined">list</span>
+</button>
+</div>
+</div>
+<!-- Category Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Category Card 1: Housing (Safe) -->
+<div class="group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#151b28] p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-200">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400">
+<span class="material-symbols-outlined">home</span>
+</div>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white">Housing</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Monthly Rent &amp; Bills</p>
+</div>
+</div>
+<button class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="mt-auto">
+<div class="flex items-end justify-between mb-2">
+<div class="flex items-baseline gap-1">
+<span class="text-lg font-bold text-gray-900 dark:text-white">$1,200</span>
+<span class="text-sm text-gray-500 dark:text-gray-400">/ $1,200</span>
+</div>
+<span class="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300">
+                            On Track
+                        </span>
+</div>
+<div class="relative h-2.5 w-full rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-primary rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+<!-- Category Card 2: Food & Dining (Safe) -->
+<div class="group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#151b28] p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-200">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white">Food &amp; Dining</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Groceries &amp; Restaurants</p>
+</div>
+</div>
+<button class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="mt-auto">
+<div class="flex items-end justify-between mb-2">
+<div class="flex items-baseline gap-1">
+<span class="text-lg font-bold text-gray-900 dark:text-white">$450</span>
+<span class="text-sm text-gray-500 dark:text-gray-400">/ $600</span>
+</div>
+<span class="text-xs font-medium text-gray-500 dark:text-gray-400">75%</span>
+</div>
+<div class="relative h-2.5 w-full rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-primary rounded-full" style="width: 75%"></div>
+</div>
+</div>
+</div>
+<!-- Category Card 3: Transportation (Warning) -->
+<div class="group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#151b28] p-5 shadow-sm hover:shadow-md hover:border-amber-500/30 transition-all duration-200">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400">
+<span class="material-symbols-outlined">directions_car</span>
+</div>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white">Transportation</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Fuel &amp; Public Transit</p>
+</div>
+</div>
+<button class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="mt-auto">
+<div class="flex items-end justify-between mb-2">
+<div class="flex items-baseline gap-1">
+<span class="text-lg font-bold text-gray-900 dark:text-white">$190</span>
+<span class="text-sm text-gray-500 dark:text-gray-400">/ $200</span>
+</div>
+<span class="inline-flex items-center rounded-full bg-amber-100 dark:bg-amber-900/30 px-2 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-400">
+                            Near Limit
+                        </span>
+</div>
+<div class="relative h-2.5 w-full rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-amber-500 rounded-full" style="width: 95%"></div>
+</div>
+</div>
+</div>
+<!-- Category Card 4: Entertainment (Over Budget) -->
+<div class="group relative flex flex-col rounded-xl border border-rose-200 dark:border-rose-900/30 bg-white dark:bg-[#151b28] p-5 shadow-sm hover:shadow-md hover:border-rose-500/30 transition-all duration-200">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400">
+<span class="material-symbols-outlined">movie</span>
+</div>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white">Entertainment</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Movies &amp; Games</p>
+</div>
+</div>
+<button class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="mt-auto">
+<div class="flex items-end justify-between mb-2">
+<div class="flex items-baseline gap-1">
+<span class="text-lg font-bold text-rose-600 dark:text-rose-400">$350</span>
+<span class="text-sm text-gray-500 dark:text-gray-400">/ $300</span>
+</div>
+<span class="inline-flex items-center gap-1 rounded-full bg-rose-100 dark:bg-rose-900/30 px-2 py-0.5 text-xs font-medium text-rose-700 dark:text-rose-300">
+<span class="material-symbols-outlined text-[14px]">warning</span> Over Budget
+                        </span>
+</div>
+<div class="relative h-2.5 w-full rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-rose-500 rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+<!-- Category Card 5: Shopping (Safe) -->
+<div class="group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#151b28] p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-200">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400">
+<span class="material-symbols-outlined">shopping_bag</span>
+</div>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white">Shopping</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Clothing &amp; Electronics</p>
+</div>
+</div>
+<button class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="mt-auto">
+<div class="flex items-end justify-between mb-2">
+<div class="flex items-baseline gap-1">
+<span class="text-lg font-bold text-gray-900 dark:text-white">$120</span>
+<span class="text-sm text-gray-500 dark:text-gray-400">/ $400</span>
+</div>
+<span class="text-xs font-medium text-gray-500 dark:text-gray-400">30%</span>
+</div>
+<div class="relative h-2.5 w-full rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-primary rounded-full" style="width: 30%"></div>
+</div>
+</div>
+</div>
+<!-- Category Card 6: Utilities (Safe) -->
+<div class="group relative flex flex-col rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#151b28] p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-200">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-50 dark:bg-cyan-900/20 text-cyan-600 dark:text-cyan-400">
+<span class="material-symbols-outlined">water_drop</span>
+</div>
+<div>
+<h3 class="font-semibold text-gray-900 dark:text-white">Utilities</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Water, Gas, Internet</p>
+</div>
+</div>
+<button class="text-gray-400 hover:text-gray-600 dark:hover:text-white">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="mt-auto">
+<div class="flex items-end justify-between mb-2">
+<div class="flex items-baseline gap-1">
+<span class="text-lg font-bold text-gray-900 dark:text-white">$140</span>
+<span class="text-sm text-gray-500 dark:text-gray-400">/ $300</span>
+</div>
+<span class="text-xs font-medium text-gray-500 dark:text-gray-400">46%</span>
+</div>
+<div class="relative h-2.5 w-full rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-primary rounded-full" style="width: 46%"></div>
+</div>
+</div>
+</div>
+<!-- New Category Prompt -->
+<button class="group relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-primary/50 dark:hover:border-primary/50 bg-transparent p-5 min-h-[160px] transition-all duration-200">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-50 dark:bg-gray-800 group-hover:bg-primary/10 group-hover:text-primary transition-colors mb-3">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-primary">add</span>
+</div>
+<h3 class="font-medium text-gray-900 dark:text-white">Add New Category</h3>
+<p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-1">Create a custom budget limit</p>
+</button>
+</div>
+</main>
+</body></html>

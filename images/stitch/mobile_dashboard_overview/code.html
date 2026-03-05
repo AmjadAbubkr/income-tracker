@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mobile Dashboard Overview</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center p-4 md:p-8 font-display text-slate-900 dark:text-white">
+<!-- Mobile Container Wrapper -->
+<div class="relative w-full max-w-[400px] h-[850px] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border-[8px] border-slate-900 overflow-hidden flex flex-col">
+<!-- Status Bar Mimic -->
+<div class="h-6 w-full bg-white dark:bg-slate-900 flex items-center justify-between px-6 pt-2 shrink-0 z-20">
+<span class="text-xs font-semibold text-slate-900 dark:text-white">9:41</span>
+<div class="flex gap-1.5">
+<div class="w-4 h-4 rounded-full bg-slate-900 dark:bg-white opacity-20"></div>
+<div class="w-4 h-4 rounded-full bg-slate-900 dark:bg-white opacity-20"></div>
+</div>
+</div>
+<!-- Header -->
+<header class="flex items-center justify-between px-6 py-4 bg-white dark:bg-slate-900 sticky top-0 z-10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden border border-slate-200 dark:border-slate-700">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="Portrait of a smiling young man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZu4EotyE0hufKaLQLUE0uvyLfc7Yxj1D9Q__ZM50uMIGzw5mjHizaFztD1_txCFkhTq-JM7r_KqSkvfdaNzKEy0kYiouuND7EjxdT9wwK7aGT6jm_KOXcxio2fDOYQGANGFmlWDj_bYO1xDBFBj1WztxNnJxcBbvyL044Qn5MfPUWhJBs78zErbXC970VKtFJ_gSwai8NxA3UyPn2DBpeIteq6itflR0aUZIVm5EezQiZb7wT6nxbrjyrPql6oaEDxRQaKGUXgII"/>
+</div>
+<div>
+<p class="text-xs text-slate-500 dark:text-slate-400">Good Morning,</p>
+<h2 class="text-sm font-bold text-slate-900 dark:text-white">Alex Morgan</h2>
+</div>
+</div>
+<button class="p-2 rounded-full hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-900 dark:text-white relative">
+<span class="material-symbols-outlined !text-[24px]">notifications</span>
+<span class="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+</button>
+</header>
+<!-- Main Scrollable Content -->
+<main class="flex-1 overflow-y-auto px-6 pb-24 scroll-smooth">
+<!-- Total Balance Card -->
+<div class="relative w-full p-6 rounded-2xl bg-primary text-white shadow-lg shadow-blue-500/20 mb-6 overflow-hidden group">
+<!-- Abstract Pattern Background -->
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-500"></div>
+<div class="absolute -left-10 -bottom-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+<div class="relative z-10 flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<span class="text-sm font-medium text-blue-100">Total Balance</span>
+<div class="px-2 py-1 bg-white/20 rounded text-[10px] font-semibold backdrop-blur-sm">USD</div>
+</div>
+<h1 class="text-3xl font-bold tracking-tight mt-1">$24,562.00</h1>
+<div class="flex items-center gap-1 mt-4">
+<span class="bg-white/20 p-1 rounded-full w-5 h-5 flex items-center justify-center">
+<span class="material-symbols-outlined !text-[12px]">trending_up</span>
+</span>
+<span class="text-xs font-medium text-blue-50">+2.5% from last month</span>
+</div>
+</div>
+</div>
+<!-- Income & Expenses Row -->
+<div class="grid grid-cols-2 gap-4 mb-6">
+<!-- Income -->
+<div class="bg-emerald-50 dark:bg-emerald-900/10 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-800/30">
+<div class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-800/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-3">
+<span class="material-symbols-outlined !text-[18px]">arrow_downward</span>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">Income</p>
+<p class="text-lg font-bold text-emerald-600 dark:text-emerald-400">$4,250</p>
+</div>
+<!-- Expense -->
+<div class="bg-rose-50 dark:bg-rose-900/10 p-4 rounded-2xl border border-rose-100 dark:border-rose-800/30">
+<div class="w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-800/30 flex items-center justify-center text-rose-600 dark:text-rose-400 mb-3">
+<span class="material-symbols-outlined !text-[18px]">arrow_upward</span>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">Expense</p>
+<p class="text-lg font-bold text-rose-600 dark:text-rose-400">$1,890</p>
+</div>
+</div>
+<!-- Analytics / Chart Section -->
+<div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700/50 p-5 shadow-sm mb-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-bold text-slate-900 dark:text-white">Weekly Spend</h3>
+<button class="text-xs text-primary font-medium flex items-center gap-0.5 hover:text-blue-700 dark:hover:text-blue-400">
+                        View Report 
+                        <span class="material-symbols-outlined !text-[14px]">chevron_right</span>
+</button>
+</div>
+<div class="h-32 w-full relative">
+<!-- Simple SVG Chart -->
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 300 100">
+<!-- Grid lines -->
+<line stroke="#f1f5f9" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="300" y1="0" y2="0"></line>
+<line stroke="#f1f5f9" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="300" y1="50" y2="50"></line>
+<line stroke="#f1f5f9" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="300" y1="100" y2="100"></line>
+<!-- Gradient Fill -->
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#135bec" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#135bec" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,80 C40,80 50,40 90,40 C130,40 140,70 180,60 C220,50 240,20 300,30 L300,100 L0,100 Z" fill="url(#chartGradient)"></path>
+<!-- Line Path -->
+<path d="M0,80 C40,80 50,40 90,40 C130,40 140,70 180,60 C220,50 240,20 300,30" fill="none" stroke="#135bec" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<!-- Data Point -->
+<circle cx="300" cy="30" fill="#135bec" r="4" stroke="white" stroke-width="2"></circle>
+</svg>
+<!-- X-Axis Labels -->
+<div class="flex justify-between mt-2 text-[10px] text-slate-400 font-medium px-1">
+<span>Mon</span>
+<span>Tue</span>
+<span>Wed</span>
+<span>Thu</span>
+<span>Fri</span>
+<span>Sat</span>
+<span>Sun</span>
+</div>
+</div>
+</div>
+<!-- Recent Transactions -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="text-base font-bold text-slate-900 dark:text-white">Recent Transactions</h3>
+<button class="text-xs text-slate-500 dark:text-slate-400 hover:text-primary">See All</button>
+</div>
+<!-- Transaction Item 1 -->
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined !text-[20px]">local_cafe</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Starbucks Coffee</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Today, 10:45 AM</span>
+</div>
+</div>
+<span class="text-sm font-bold text-slate-900 dark:text-white">-$5.50</span>
+</div>
+<!-- Transaction Item 2 -->
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined !text-[20px]">shopping_bag</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Apple Store</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Yesterday, 4:20 PM</span>
+</div>
+</div>
+<span class="text-sm font-bold text-slate-900 dark:text-white">-$240.00</span>
+</div>
+<!-- Transaction Item 3 -->
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined !text-[20px]">directions_bus</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Uber Ride</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Nov 12, 8:30 PM</span>
+</div>
+</div>
+<span class="text-sm font-bold text-slate-900 dark:text-white">-$14.20</span>
+</div>
+<!-- Transaction Item 4 (Income) -->
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined !text-[20px]">payments</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-slate-900 dark:text-white">Salary Deposit</span>
+<span class="text-xs text-slate-500 dark:text-slate-400">Nov 01, 9:00 AM</span>
+</div>
+</div>
+<span class="text-sm font-bold text-emerald-600 dark:text-emerald-400">+$3,200.00</span>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation -->
+<nav class="absolute bottom-0 w-full bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 px-6 py-3 pb-6 z-20">
+<div class="flex justify-between items-center">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined !text-[24px]">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" href="#">
+<span class="material-symbols-outlined !text-[24px]">bar_chart</span>
+<span class="text-[10px] font-medium">Analytics</span>
+</a>
+<!-- Floating FAB -->
+<button class="relative -top-6 bg-primary text-white w-14 h-14 rounded-full shadow-lg shadow-blue-500/40 flex items-center justify-center hover:bg-blue-700 transition-colors border-4 border-white dark:border-slate-900">
+<span class="material-symbols-outlined !text-[28px]">add</span>
+</button>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" href="#">
+<span class="material-symbols-outlined !text-[24px]">account_balance_wallet</span>
+<span class="text-[10px] font-medium">Budget</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" href="#">
+<span class="material-symbols-outlined !text-[24px]">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</a>
+</div>
+</nav>
+<!-- Home Indicator -->
+<div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-slate-900/20 dark:bg-white/20 rounded-full z-30"></div>
+</div>
+</body></html>

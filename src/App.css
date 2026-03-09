@@ -182,6 +182,8 @@ body {
   font-size: var(--font-base);
   line-height: 1.5;
   letter-spacing: -0.01em;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 a,
@@ -384,8 +386,10 @@ textarea {
 }
 
 .sidebar.collapsed {
-  width: 72px;
+  width: 100px;
   padding: var(--spacing-md);
+  display: flex;
+  align-items: center;
 }
 
 .sidebar-header {
@@ -2802,5 +2806,17 @@ textarea {
 
   .field-group-v2.full-width {
     grid-column: span 1;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
   }
 }

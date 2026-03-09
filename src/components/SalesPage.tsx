@@ -103,7 +103,7 @@ export default function SalesPage({
 
     setCart([]);
     setNotes('');
-    alert(t.incomeRecordedSuccessfully || 'Sale completed successfully!');
+    alert('Sale completed successfully!');
   };
 
   const getStockStatus = (stock: number | undefined) => {

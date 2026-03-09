@@ -55,11 +55,23 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
 
   return (
     <header className="app-header">
-      <div className="header-title-v2">
+      <div className="header-left-mobile">
+        <div className="mobile-user-avatar" onClick={() => setShowUserDropdown(!showUserDropdown)}>
+          <div className="avatar-mini-circle">
+            {user?.name?.[0]?.toUpperCase() || 'U'}
+          </div>
+        </div>
+        <div className="header-greeting">
+          <span className="greeting-text">Good Morning,</span>
+          <span className="user-name">{user?.name || 'Alex Morgan'}</span>
+        </div>
+      </div>
+
+      <div className="header-title-v2 desktop-only">
         <h1 style={{ fontSize: 'var(--font-xl)', fontWeight: 700, margin: 0 }}>Dashboard Overview</h1>
       </div>
 
-      <div className="header-search">
+      <div className="header-search desktop-only">
         <span className="material-symbols-outlined" style={{ fontSize: 18 }}>search</span>
         <input
           type="text"
@@ -79,7 +91,7 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
             style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
             title={t.notifications}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>notifications</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'var(--text)' }}>notifications</span>
             {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
           </div>
 
@@ -117,8 +129,8 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
           )}
         </div>
 
-        {/* User Account Dropdown */}
-        <div className="header-avatar" style={{ position: 'relative' }} ref={userRef}>
+        {/* User Account Dropdown - Hidden on mobile, moved to left avatar */}
+        <div className="header-avatar desktop-only" style={{ position: 'relative' }} ref={userRef}>
           <div
             onClick={() => setShowUserDropdown(!showUserDropdown)}
             style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
@@ -131,7 +143,7 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
             <div className="header-dropdown user-dropdown">
               <div className="dropdown-profile">
                 <div className="avatar-large">
-                  {user?.name?.[0].toUpperCase()}
+                  {user?.name?.[0]?.toUpperCase() || 'U'}
                 </div>
                 <div className="profile-info">
                   <h4>{user?.name}</h4>
@@ -151,7 +163,31 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
           )}
         </div>
 
-        <div className="currency-selector-header">
+        {/* The actual mobile user dropdown needs to be accessible from the left avatar too */}
+        {showUserDropdown && (
+          <div className="header-dropdown user-dropdown mobile-only-dropdown">
+            <div className="dropdown-profile">
+              <div className="avatar-large">
+                {user?.name?.[0]?.toUpperCase() || 'U'}
+              </div>
+              <div className="profile-info">
+                <h4>{user?.name}</h4>
+                <p>{user?.email}</p>
+              </div>
+            </div>
+            <div className="dropdown-divider"></div>
+            <div className="dropdown-item" onClick={() => { onViewChange('settings'); setShowUserDropdown(false); }}>
+              <span className="material-symbols-outlined">settings</span>
+              <span>{t.settings}</span>
+            </div>
+            <div className="dropdown-item logout" onClick={handleLogout}>
+              <span className="material-symbols-outlined">logout</span>
+              <span>{t.logout}</span>
+            </div>
+          </div>
+        )}
+
+        <div className="currency-selector-header desktop-only">
           <select
             value={currency}
             onChange={(e) => onCurrencyChange(e.target.value)}

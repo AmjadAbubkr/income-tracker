@@ -207,7 +207,7 @@ class Database {
   }
 
   // Generic add with userId injection
-  private async addOneForUser<T>(storeName: string, item: any): Promise<void> {
+  private async addOneForUser(storeName: string, item: any): Promise<void> {
     if (!this.currentUserId) throw new Error("No user logged in");
     const db = await this.ensureDB();
     return new Promise((resolve, reject) => {

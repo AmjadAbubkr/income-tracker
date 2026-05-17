@@ -5,6 +5,9 @@ import {
   text,
   timestamp,
   boolean,
+  decimal,
+  integer,
+  unique,
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('user', {
@@ -56,3 +59,29 @@ export const verification = pgTable('verification', {
   createdAt: timestamp('created_at'),
   updatedAt: timestamp('updated_at'),
 });
+
+export const product = pgTable('product', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  price: decimal('price', { precision: 10, scale: 2 }).notNull(),
+  description: text('description'),
+  image: varchar('image', { length: 500 }),
+  inventory: integer('inventory'),
+  category: varchar('category', { length: 255 }),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const category = pgTable('category', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (table) => ({
+  uniqueUserCategory: unique('unique_user_category').on(table.userId, table.name),
+}));

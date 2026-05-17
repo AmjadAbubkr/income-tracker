@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
-import { user, session, account, verification } from './schema';
+import { user, session, account, verification, product, category } from './schema';
 
 const client = postgres(process.env.DATABASE_URL!);
 export const db = drizzle(client);
@@ -16,4 +16,4 @@ export async function testConnection(): Promise<void> {
   }
 }
 
-export { user, session, account, verification };
+export { user, session, account, verification, product, category };

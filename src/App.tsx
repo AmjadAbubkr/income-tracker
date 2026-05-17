@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Product, IncomeEntry, Expense, BusinessSubscription, CustomerSubscription } from './types';
 import { storage } from './utils/storage';
 import { currencyStorage } from './utils/currency';
@@ -22,6 +23,8 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import './App.css';
 import './mobile.css';
+
+const queryClient = new QueryClient();
 
 type View = 'dashboard' | 'sales' | 'products' | 'analytics' | 'settings' | 'expenses' | 'subscriptions';
 type AuthView = 'login' | 'register';
@@ -343,10 +346,6 @@ function App() {
           )}
           {currentView === 'products' && (
             <ProductsPage
-              products={products}
-              onDeleteProduct={handleDeleteProduct}
-              onEditProduct={handleEditProduct}
-              onAddProduct={handleAddProduct}
               currency={currency}
               searchQuery={searchQuery}
             />
@@ -397,14 +396,16 @@ function App() {
 
 export default function Root() {
   return (
-    <ThemeProvider>
-      <LanguageProvider>
-        <AuthProvider>
-          <NotificationProvider>
-            <App />
-          </NotificationProvider>
-        </AuthProvider>
-      </LanguageProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <NotificationProvider>
+              <App />
+            </NotificationProvider>
+          </AuthProvider>
+        </LanguageProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }

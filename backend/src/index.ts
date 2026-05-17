@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { serve } from '@hono/node-server';
 import pino from 'pino';
 import 'dotenv/config';
+import { apiRoutes } from './routes';
 
 const logger = pino({
   level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
@@ -44,6 +45,9 @@ app.use('*', async (c, next) => {
 app.get('/api/health', (c) =>
   c.json({ status: 'ok', timestamp: new Date().toISOString() })
 );
+
+// Mount API routes
+app.route('/api', apiRoutes);
 
 // 404 handler
 app.notFound((c) => c.json({ error: 'Not Found' }, 404));

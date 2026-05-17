@@ -128,42 +128,42 @@
 | PROD-03 | Phase 2 | Pending |
 | PROD-04 | Phase 2 | Pending |
 | PROD-05 | Phase 2 | Pending |
-| SALE-01 | Phase 2 | Pending |
-| SALE-02 | Phase 2 | Pending |
-| SALE-03 | Phase 2 | Pending |
-| SALE-04 | Phase 2 | Pending |
-| SALE-05 | Phase 2 | Pending |
-| EXP-01 | Phase 2 | Pending |
-| EXP-02 | Phase 2 | Pending |
-| EXP-03 | Phase 2 | Pending |
-| EXP-04 | Phase 2 | Pending |
-| SUB-01 | Phase 3 | Pending |
-| SUB-02 | Phase 3 | Pending |
-| SUB-03 | Phase 3 | Pending |
-| SUB-04 | Phase 3 | Pending |
-| DASH-01 | Phase 3 | Pending |
-| DASH-02 | Phase 3 | Pending |
-| DASH-03 | Phase 3 | Pending |
-| DASH-04 | Phase 3 | Pending |
-| DASH-05 | Phase 3 | Pending |
-| NOTF-01 | Phase 3 | Pending |
-| NOTF-02 | Phase 3 | Pending |
-| RPT-01 | Phase 4 | Pending |
-| RPT-02 | Phase 4 | Pending |
-| RPT-03 | Phase 4 | Pending |
-| RPT-04 | Phase 4 | Pending |
-| RPT-05 | Phase 4 | Pending |
-| RPT-06 | Phase 4 | Pending |
-| SET-01 | Phase 4 | Pending |
-| SET-02 | Phase 4 | Pending |
-| SET-03 | Phase 4 | Pending |
-| SET-04 | Phase 4 | Pending |
+| SALE-01 | Phase 3 | Pending |
+| SALE-02 | Phase 3 | Pending |
+| SALE-03 | Phase 3 | Pending |
+| SALE-04 | Phase 3 | Pending |
+| SALE-05 | Phase 3 | Pending |
+| EXP-01 | Phase 4 | Pending |
+| EXP-02 | Phase 4 | Pending |
+| EXP-03 | Phase 4 | Pending |
+| EXP-04 | Phase 4 | Pending |
+| SUB-01 | Phase 5 | Pending |
+| SUB-02 | Phase 5 | Pending |
+| SUB-03 | Phase 5 | Pending |
+| SUB-04 | Phase 5 | Pending |
+| DASH-01 | Phase 6 | Pending |
+| DASH-02 | Phase 6 | Pending |
+| DASH-03 | Phase 6 | Pending |
+| DASH-04 | Phase 6 | Pending |
+| DASH-05 | Phase 6 | Pending |
+| NOTF-01 | Phase 7 | Pending |
+| NOTF-02 | Phase 7 | Pending |
+| SET-01 | Phase 8 | Pending |
+| SET-02 | Phase 8 | Pending |
+| SET-03 | Phase 8 | Pending |
+| SET-04 | Phase 8 | Pending |
+| RPT-01 | Phase 9 | Pending |
+| RPT-02 | Phase 9 | Pending |
+| RPT-03 | Phase 9 | Pending |
+| RPT-04 | Phase 9 | Pending |
+| RPT-05 | Phase 9 | Pending |
+| RPT-06 | Phase 9 | Pending |
 
 **Coverage:**
-- v1 requirements: 40 total
-- Mapped to phases: 40
+- v1 requirements: 39 total
+- Mapped to phases: 39
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-05-17*
-*Last updated: 2026-05-17 after initial definition*
+*Last updated: 2026-05-17 after roadmap creation (9-phase structure)*

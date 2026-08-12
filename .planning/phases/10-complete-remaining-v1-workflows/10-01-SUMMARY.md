@@ -5,6 +5,7 @@ subsystem: financial-history
 tags: [sales, expenses, indexeddb, inventory, filters]
 key-files: [src/utils/database.ts, src/utils/storage.ts, src/stores/incomeStore.ts, src/stores/expenseStore.ts, src/components/SalesPage.tsx, src/components/ExpensesPage.tsx]
 metrics: {tasks: 3, tests_added: 4, commits: 3}
+requirements-completed: [SALE-02, SALE-03, SALE-04, EXP-02, EXP-03, EXP-04]
 ---
 
 # Plan 10-01 Summary

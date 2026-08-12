@@ -1,3 +1,10 @@
+---
+phase: 01-backend-foundation
+plan: 01
+historical: true
+requirements-completed: [AUTH-01, AUTH-02, AUTH-03, AUTH-04]
+---
+
 # Plan 01-01 Summary — Backend Project Scaffolding
 
 ## Objective
@@ -44,3 +51,6 @@ Establish the backend project foundation: Node.js + Hono server, PostgreSQL + Dr
 ## Self-Check: PASSED
 
 All tasks completed. Foundation ready for Plan 01-02 (Better Auth implementation).
+# Plan 01-01 Summary — Backend Project Scaffolding
+# Plan 01-01 Summary — Backend Project Scaffolding
+# Plan 01-01 Summary — Backend Project Scaffolding

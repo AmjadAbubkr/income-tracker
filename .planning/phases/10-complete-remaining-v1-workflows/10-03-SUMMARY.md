@@ -5,6 +5,7 @@ subsystem: shell-and-localization
 tags: [notifications, profile, localization, accessibility, en, fr, ar]
 key-files: [src/context/NotificationContext.tsx, src/context/AuthContext.tsx, src/components/Header.tsx, src/components/SettingsPage.tsx, src/translations.ts]
 metrics: {tasks: 3, tests_added: 3, commits: 4}
+requirements-completed: [NOTF-01, NOTF-02, SET-03, SET-04]
 ---
 
 # Plan 10-03 Summary

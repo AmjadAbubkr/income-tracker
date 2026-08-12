@@ -3,6 +3,7 @@ phase: 09-release-safety-and-data-correctness
 plan: 01
 status: complete
 completed: 2026-08-12
+requirements-completed: [RPT-01, RPT-02, RPT-03, RPT-04, RPT-05, RPT-06]
 ---
 
 # Plan 09-01 Summary

@@ -259,6 +259,8 @@ const en = {
   failedToDeleteExpense: 'Failed to delete the expense. Please try again.',
   allCategories: 'All Categories',
   deleteExpense: 'Delete expense',
+  printReport: 'Print Report',
+  financialSummary: 'Financial Summary',
 } as const;
 
 /* ────────────────────────────────────────────────────────── */
@@ -520,6 +522,8 @@ const fr = {
   failedToDeleteExpense: 'Échec de la suppression de la dépense. Réessayez.',
   allCategories: 'Toutes les catégories',
   deleteExpense: 'Supprimer la dépense',
+  printReport: 'Imprimer le rapport',
+  financialSummary: 'Résumé financier',
 } as const;
 
 /* ────────────────────────────────────────────────────────── */
@@ -781,6 +785,8 @@ const ar = {
   failedToDeleteExpense: 'تعذر حذف المصروف. حاول مرة أخرى.',
   allCategories: 'كل الفئات',
   deleteExpense: 'حذف المصروف',
+  printReport: 'طباعة التقرير',
+  financialSummary: 'الملخص المالي',
 } as const;
 
 export const translations = { en, fr, ar } as const;

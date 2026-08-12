@@ -1,12 +1,13 @@
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { formatCurrency } from '../utils/currency';
 import { exportToExcel } from '../utils/export';
+import { buildPeriodReport, type ReportPeriod } from '../utils/reporting';
 import { useLanguage } from '../context/LanguageContext';
 import AnalyticsCharts from './AnalyticsCharts';
+import PrintReport from './PrintReport';
 import SummaryCard from './SummaryCard';
 import { useIncomeStore } from '../stores/incomeStore';
 import { useExpenseStore } from '../stores/expenseStore';
-import { useSubscriptionStore } from '../stores/subscriptionStore';
 import { useProducts } from '../hooks/useProducts';
 
 interface AnalyticsPageProps {
@@ -14,57 +15,22 @@ interface AnalyticsPageProps {
   currentMonth: string;
 }
 
-export default function AnalyticsPage({
-  currency,
-  currentMonth,
-}: AnalyticsPageProps) {
+export default function AnalyticsPage({ currency, currentMonth }: AnalyticsPageProps) {
   const { t } = useLanguage();
-  const [viewMode, setViewMode] = useState<'daily' | 'weekly' | 'monthly' | 'yearly'>('weekly');
-
-  const incomeEntries = useIncomeStore((s) => s.entries);
-  const expenses = useExpenseStore((s) => s.expenses);
-  const businessSubscriptions = useSubscriptionStore((s) => s.business);
-  const customerSubscriptions = useSubscriptionStore((s) => s.customer);
+  const [viewMode, setViewMode] = useState<ReportPeriod>('weekly');
+  const incomeEntries = useIncomeStore((state) => state.entries);
+  const expenses = useExpenseStore((state) => state.expenses);
   const { data: products = [] } = useProducts();
+  const anchorDate = viewMode === 'monthly' ? `${currentMonth}-01` : new Date().toISOString().split('T')[0]!;
 
-  const filteredIncome = useMemo(() => {
-    const now = new Date();
-    if (viewMode === 'daily') {
-      const today = new Date().toISOString().split('T')[0];
-      return incomeEntries.filter((e) => e.date === today);
-    } else if (viewMode === 'weekly') {
-      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      return incomeEntries.filter((e) => e.date >= weekAgo);
-    } else if (viewMode === 'monthly') {
-      const monthStart = currentMonth + '-01';
-      return incomeEntries.filter((e) => e.date >= monthStart);
-    } else {
-      const yearStart = now.getFullYear().toString() + '-01-01';
-      return incomeEntries.filter((e) => e.date >= yearStart);
-    }
-  }, [incomeEntries, viewMode, currentMonth]);
-
-  const totalRevenueMinor = useMemo(() => filteredIncome.reduce((sum, e) => sum + e.amountMinor, 0), [filteredIncome]);
-  const totalExpensesMinor = useMemo(() => expenses.reduce((sum, e) => sum + e.amountMinor, 0), [expenses]);
-  const netProfitMinor = totalRevenueMinor - totalExpensesMinor;
-
-  const topProducts = useMemo(() => {
-    const productMap: Record<string, { name: string; revenue: number; quantity: number }> = {};
-    filteredIncome.forEach((entry) => {
-      if (!productMap[entry.productId]) {
-        productMap[entry.productId] = { name: entry.productId, revenue: 0, quantity: 0 };
-      }
-      productMap[entry.productId].revenue += entry.amountMinor;
-      productMap[entry.productId].quantity += entry.quantity;
-    });
-    return Object.values(productMap)
-      .sort((a, b) => b.revenue - a.revenue)
-      .slice(0, 5);
-  }, [filteredIncome]);
+  const report = useMemo(
+    () => buildPeriodReport(incomeEntries, expenses, products, viewMode, anchorDate),
+    [anchorDate, expenses, incomeEntries, products, viewMode],
+  );
 
   const handleExport = async () => {
     try {
-      await exportToExcel(incomeEntries, [], currency, viewMode === 'daily' ? 'daily' : 'monthly');
+      await exportToExcel(report, products, currency, viewMode === 'daily' ? 'daily' : 'monthly');
     } catch (error) {
       console.error('Export failed', error);
       alert(t.failedToExport);
@@ -75,20 +41,21 @@ export default function AnalyticsPage({
     <div className="analytics-page">
       <div className="page-header">
         <h1>{t.analytics}</h1>
-        <button className="btn-secondary" onClick={handleExport}>
-          {t.export}
-        </button>
+        <div className="page-actions">
+          <button type="button" className="btn-secondary" onClick={handleExport}>{t.export}</button>
+          <button type="button" className="btn-secondary" onClick={() => window.print()}>{t.printReport}</button>
+        </div>
       </div>
 
       <div className="analytics-summary">
-        <SummaryCard title={t.totalRevenue} value={formatCurrency(totalRevenueMinor, currency)} />
-        <SummaryCard title={t.totalExpenses} value={formatCurrency(totalExpensesMinor, currency)} />
-        <SummaryCard title={t.netProfit} value={formatCurrency(netProfitMinor, currency)} />
+        <SummaryCard title={t.totalRevenue} value={formatCurrency(report.totalRevenueMinor, currency)} />
+        <SummaryCard title={t.totalExpenses} value={formatCurrency(report.totalExpensesMinor, currency)} />
+        <SummaryCard title={t.netProfit} value={formatCurrency(report.netProfitMinor, currency)} />
       </div>
 
       <div className="analytics-controls">
-        {(['daily', 'weekly', 'monthly', 'yearly'] as const).map((mode) => (
-          <button key={mode} className={viewMode === mode ? 'active' : ''} onClick={() => setViewMode(mode)}>
+        {(['daily', 'weekly', 'monthly', 'yearly', 'allTime'] as const).map((mode) => (
+          <button key={mode} type="button" className={viewMode === mode ? 'active' : ''} onClick={() => setViewMode(mode)}>
             {t[mode]}
           </button>
         ))}
@@ -96,7 +63,8 @@ export default function AnalyticsPage({
 
       <div className="analytics-charts">
         <AnalyticsCharts
-          incomeEntries={filteredIncome}
+          incomeEntries={report.incomeEntries}
+          expenses={report.expenses}
           products={products}
           currency={currency}
           viewMode={viewMode}
@@ -105,18 +73,20 @@ export default function AnalyticsPage({
 
       <div className="top-products">
         <h2>{t.topProducts}</h2>
-        {topProducts.length === 0 ? (
+        {report.topProducts.length === 0 ? (
           <p>{t.noDataForPeriod}</p>
         ) : (
-          topProducts.map((product) => (
-            <div key={product.name} className="top-product-item">
+          report.topProducts.map((product) => (
+            <div key={product.productId} className="top-product-item">
               <span>{product.name}</span>
-              <span>{formatCurrency(product.revenue, currency)}</span>
+              <span>{formatCurrency(product.revenueMinor, currency)}</span>
               <span>{product.quantity} {t.itemsSold}</span>
             </div>
           ))
         )}
       </div>
+
+      <PrintReport report={report} currency={currency} period={viewMode} />
     </div>
   );
 }

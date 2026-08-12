@@ -3296,3 +3296,41 @@ textarea {
     flex-direction: column;
   }
 }
+
+.print-report {
+  display: none;
+}
+
+.print-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+}
+
+.print-summary-grid div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-md);
+  border: 1px solid var(--border);
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-report,
+  .print-report * {
+    visibility: visible;
+  }
+
+  .print-report {
+    display: block;
+    position: absolute;
+    inset: 0;
+    padding: 2rem;
+    color: #111827;
+    background: #fff;
+  }
+}

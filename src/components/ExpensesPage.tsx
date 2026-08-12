@@ -23,14 +23,32 @@ export default function ExpensesPage({ currency }: ExpensesPageProps) {
     const { t } = useLanguage();
     const expenseStore = useExpenseStore();
     const [isFormOpen, setIsFormOpen] = useState(false);
+    const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+    const [historyDate, setHistoryDate] = useState('');
+    const [historyCategory, setHistoryCategory] = useState('');
+
+    const categories = useMemo(() => {
+        return Array.from(new Set(expenseStore.expenses.map((expense) => expense.category))).sort();
+    }, [expenseStore.expenses]);
 
     const sortedExpenses = useMemo(() => {
         return [...expenseStore.expenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }, [expenseStore.expenses]);
 
+    const filteredExpenses = useMemo(() => {
+        return sortedExpenses.filter((expense) =>
+            (!historyDate || expense.date === historyDate)
+            && (!historyCategory || expense.category === historyCategory)
+        );
+    }, [historyCategory, historyDate, sortedExpenses]);
+
     const handleDelete = async (id: string) => {
-        if (window.confirm('Are you sure you want to delete this expense?')) {
-            await expenseStore.remove(id);
+        if (window.confirm(t.confirmDeleteExpense)) {
+            try {
+                await expenseStore.remove(id);
+            } catch (error) {
+                alert(error instanceof Error ? error.message : t.failedToDeleteExpense);
+            }
         }
     };
 
@@ -44,10 +62,24 @@ export default function ExpensesPage({ currency }: ExpensesPageProps) {
             </div>
 
             <div className="expenses-list">
-                {sortedExpenses.length === 0 ? (
+                <div className="history-filters">
+                    <label>
+                        {t.date}
+                        <input type="date" value={historyDate} onChange={(event) => setHistoryDate(event.target.value)} />
+                    </label>
+                    <label>
+                        {t.category}
+                        <select value={historyCategory} onChange={(event) => setHistoryCategory(event.target.value)}>
+                            <option value="">{t.allCategories}</option>
+                            {categories.map((category) => <option key={category} value={category}>{category}</option>)}
+                        </select>
+                    </label>
+                </div>
+
+                {filteredExpenses.length === 0 ? (
                     <p>{t.noExpensesYet}</p>
                 ) : (
-                    sortedExpenses.map((expense) => (
+                    filteredExpenses.map((expense) => (
                         <div key={expense.id} className="expense-item">
                             <div className="expense-info">
                                 <h3>{expense.description}</h3>
@@ -55,7 +87,10 @@ export default function ExpensesPage({ currency }: ExpensesPageProps) {
                             </div>
                             <div className="expense-actions">
                                 <span className="expense-amount">{formatCurrency(expense.amountMinor, currency)}</span>
-                                <button onClick={() => handleDelete(expense.id)} aria-label="Delete expense">
+                                <button type="button" onClick={() => setEditingExpense(expense)} aria-label={t.editExpense}>
+                                    {t.edit}
+                                </button>
+                                <button type="button" onClick={() => handleDelete(expense.id)} aria-label={t.deleteExpense}>
                                     <TrashIcon />
                                 </button>
                             </div>
@@ -64,13 +99,22 @@ export default function ExpensesPage({ currency }: ExpensesPageProps) {
                 )}
             </div>
 
-            {isFormOpen && (
+            {(isFormOpen || editingExpense) && (
                 <ExpenseForm
-                    onCancel={() => setIsFormOpen(false)}
-                    currency={currency}
-                    onSubmit={async (data) => {
-                        await expenseStore.add(data);
+                    onCancel={() => {
                         setIsFormOpen(false);
+                        setEditingExpense(null);
+                    }}
+                    currency={currency}
+                    initialData={editingExpense || undefined}
+                    onSubmit={async (data) => {
+                        if (editingExpense) {
+                            await expenseStore.update(editingExpense.id, data);
+                            setEditingExpense(null);
+                        } else {
+                            await expenseStore.add(data);
+                            setIsFormOpen(false);
+                        }
                     }}
                 />
             )}

@@ -1,39 +1,46 @@
 import { useState } from 'react';
 import { BusinessSubscription } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { formatMoneyInput, parseMoneyInput } from '../utils/currency';
 
 interface BusinessSubscriptionFormProps {
     onSubmit: (sub: Omit<BusinessSubscription, 'id'>) => Promise<void>;
     onClose: () => void;
+    currency: string;
     initialData?: BusinessSubscription;
 }
 
-export default function BusinessSubscriptionForm({ onSubmit, onClose, initialData }: BusinessSubscriptionFormProps) {
+export default function BusinessSubscriptionForm({ onSubmit, onClose, currency, initialData }: BusinessSubscriptionFormProps) {
     const { t } = useLanguage();
     const [formData, setFormData] = useState<Omit<BusinessSubscription, 'id'>>({
         name: initialData?.name || '',
-        amount: initialData?.amount || 0,
+        amountMinor: initialData?.amountMinor || 0,
         billingCycle: initialData?.billingCycle || 'monthly',
         category: initialData?.category || 'Service',
         nextBillingDate: initialData?.nextBillingDate || new Date().toISOString().split('T')[0],
         status: initialData?.status || 'active',
     });
+    const [amount, setAmount] = useState(initialData ? formatMoneyInput(initialData.amountMinor, currency) : '');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.name || formData.amount <= 0) {
+        const amountMinor = parseMoneyInput(amount, currency);
+        if (!formData.name || amountMinor === null || amountMinor <= 0) {
             alert(t.fillRequiredFields);
             return;
         }
-        onSubmit(formData);
+        onSubmit({ ...formData, amountMinor });
     };
 
     return (
         <form onSubmit={handleSubmit} className="income-form">
             <div className="form-group">
-                <label>{t.description} *</label>
+                <label htmlFor="biz-sub-name">{t.description} *</label>
                 <input
+                    id="biz-sub-name"
+                    name="bizSubName"
                     type="text"
+                    autoComplete="off"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g. GitHub, Netflix, Hosting"
@@ -43,20 +50,24 @@ export default function BusinessSubscriptionForm({ onSubmit, onClose, initialDat
 
             <div className="form-row">
                 <div className="form-group">
-                    <label>{t.amount} *</label>
+                    <label htmlFor="biz-sub-amount">{t.amount} *</label>
                     <input
+                        id="biz-sub-amount"
+                        name="bizSubAmount"
                         type="number"
                         step="0.01"
-                        value={formData.amount || ''}
-                        onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) })}
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
                         required
                     />
                 </div>
                 <div className="form-group">
-                    <label>{t.billingCycle}</label>
+                    <label htmlFor="biz-sub-cycle">{t.billingCycle}</label>
                     <select
+                        id="biz-sub-cycle"
+                        name="bizSubCycle"
                         value={formData.billingCycle}
-                        onChange={(e) => setFormData({ ...formData, billingCycle: e.target.value as any })}
+                        onChange={(e) => setFormData({ ...formData, billingCycle: e.target.value as BusinessSubscription['billingCycle'] })}
                     >
                         <option value="monthly">{t.monthly}</option>
                         <option value="yearly">{t.yearly}</option>
@@ -65,9 +76,12 @@ export default function BusinessSubscriptionForm({ onSubmit, onClose, initialDat
             </div>
 
             <div className="form-group">
-                <label>{t.category}</label>
+                <label htmlFor="biz-sub-category">{t.category}</label>
                 <input
+                    id="biz-sub-category"
+                    name="bizSubCategory"
                     type="text"
+                    autoComplete="off"
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     placeholder="e.g. Tools, Hosting"
@@ -76,18 +90,23 @@ export default function BusinessSubscriptionForm({ onSubmit, onClose, initialDat
 
             <div className="form-row">
                 <div className="form-group">
-                    <label>{t.nextBillingDate}</label>
+                    <label htmlFor="biz-sub-next-date">{t.nextBillingDate}</label>
                     <input
+                        id="biz-sub-next-date"
+                        name="bizSubNextDate"
                         type="date"
+                        autoComplete="off"
                         value={formData.nextBillingDate}
                         onChange={(e) => setFormData({ ...formData, nextBillingDate: e.target.value })}
                     />
                 </div>
                 <div className="form-group">
-                    <label>{t.status}</label>
+                    <label htmlFor="biz-sub-status">{t.status}</label>
                     <select
+                        id="biz-sub-status"
+                        name="bizSubStatus"
                         value={formData.status}
-                        onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                        onChange={(e) => setFormData({ ...formData, status: e.target.value as BusinessSubscription['status'] })}
                     >
                         <option value="active">{t.active}</option>
                         <option value="paused">{t.paused}</option>

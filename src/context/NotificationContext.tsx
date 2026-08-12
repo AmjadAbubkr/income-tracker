@@ -1,129 +1,130 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from 'react';
 import { storage } from '../utils/storage';
 import { useAuth } from './AuthContext';
+import { useLanguage } from './LanguageContext';
+import type { View } from '../types';
 
 export interface Notification {
-    id: string;
-    type: 'stock' | 'subscription' | 'info';
-    title: string;
-    message: string;
-    date: string;
-    read: boolean;
-    actionParams?: {
-        view: string; // e.g., 'products', 'subscriptions'
-        itemId?: string;
-    };
+  id: string;
+  type: 'stock' | 'subscription' | 'info';
+  title: string;
+  message: string;
+  date: string;
+  read: boolean;
+  actionParams?: { view: View; itemId?: string };
 }
 
 interface NotificationContextType {
-    notifications: Notification[];
-    unreadCount: number;
-    markAsRead: (id: string) => void;
-    clearAll: () => void;
-    refreshNotifications: () => Promise<void>;
+  notifications: Notification[];
+  unreadCount: number;
+  markAsRead: (id: string) => void;
+  clearAll: () => void;
+  refreshNotifications: () => Promise<void>;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
+function replaceTokens(value: string, tokens: Record<string, string>): string {
+  return Object.entries(tokens).reduce((result, [key, token]) => result.replace(`{${key}}`, token), value);
+}
+
+export function isLowStock(inventory: number | undefined): boolean {
+  return inventory !== undefined && inventory <= 5;
+}
+
+export function isWithinNextDays(date: string, today: string, days: number): boolean {
+  const latest = new Date(`${today}T00:00:00.000Z`);
+  latest.setUTCDate(latest.getUTCDate() + days);
+  return date >= today && date <= latest.toISOString().split('T')[0]!;
+}
+
 export function NotificationProvider({ children }: { children: ReactNode }) {
-    const [notifications, setNotifications] = useState<Notification[]>([]);
-    const { user } = useAuth();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const { user } = useAuth();
+  const { t, language } = useLanguage();
 
-    const refreshNotifications = async () => {
-        if (!user) return;
+  const refreshNotifications = useCallback(async () => {
+    if (!user) {
+      setNotifications([]);
+      return;
+    }
 
-        const newNotifications: Notification[] = [];
-        const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split('T')[0]!;
+    const nextNotifications: Notification[] = [];
 
-        // 1. Check Low Stock
-        const products = await storage.getProducts();
-        products.forEach(p => {
-            if (p.inventory !== undefined && p.inventory <= 5) {
-                newNotifications.push({
-                    id: `stock-${p.id}-${today}`,
-                    type: 'stock',
-                    title: 'Low Stock Alert',
-                    message: `${p.name} is running low (${p.inventory} left).`,
-                    date: today,
-                    read: false,
-                    actionParams: { view: 'products', itemId: p.id }
-                });
-            }
+    const products = await storage.getProducts();
+    products.forEach((product) => {
+      if (isLowStock(product.inventory)) {
+        nextNotifications.push({
+          id: `stock-${product.id}-${today}`,
+          type: 'stock',
+          title: t.lowStockAlert,
+          message: replaceTokens(t.stockRunningLow, { name: product.name, stock: String(product.inventory) }),
+          date: today,
+          read: false,
+          actionParams: { view: 'products', itemId: product.id },
         });
+      }
+    });
 
-        // 2. Check Subscriptions Renewing Soon (next 3 days)
-        const next3Days = new Date();
-        next3Days.setDate(next3Days.getDate() + 3);
-        const next3DaysStr = next3Days.toISOString().split('T')[0];
-
-        const bizSubs = await storage.getBusinessSubscriptions();
-        bizSubs.forEach(s => {
-            if (s.status === 'active' && s.nextBillingDate <= next3DaysStr && s.nextBillingDate >= today) {
-                newNotifications.push({
-                    id: `biz-sub-${s.id}-${s.nextBillingDate}`,
-                    type: 'subscription',
-                    title: 'Upcoming Payment',
-                    message: `Business subscription ${s.name} renews on ${s.nextBillingDate}.`,
-                    date: today,
-                    read: false,
-                    actionParams: { view: 'subscriptions', itemId: s.id }
-                });
-            }
+    const businessSubscriptions = await storage.getBusinessSubscriptions();
+    businessSubscriptions.forEach((subscription) => {
+      if (subscription.status === 'active' && isWithinNextDays(subscription.nextBillingDate, today, 3)) {
+        nextNotifications.push({
+          id: `biz-sub-${subscription.id}-${subscription.nextBillingDate}`,
+          type: 'subscription',
+          title: t.upcomingPayment,
+          message: replaceTokens(t.businessSubscriptionRenews, { name: subscription.name, date: subscription.nextBillingDate }),
+          date: today,
+          read: false,
+          actionParams: { view: 'subscriptions', itemId: subscription.id },
         });
+      }
+    });
 
-        const custSubs = await storage.getCustomerSubscriptions();
-        custSubs.forEach(s => {
-            if (s.status === 'active' && s.nextBillingDate <= next3DaysStr && s.nextBillingDate >= today) {
-                newNotifications.push({
-                    id: `cust-sub-${s.id}-${s.nextBillingDate}`,
-                    type: 'subscription',
-                    title: 'Upcoming Revenue',
-                    message: `Customer ${s.customerName} subscription renews on ${s.nextBillingDate}.`,
-                    date: today,
-                    read: false,
-                    actionParams: { view: 'subscriptions', itemId: s.id }
-                });
-            }
+    const customerSubscriptions = await storage.getCustomerSubscriptions();
+    customerSubscriptions.forEach((subscription) => {
+      if (subscription.status === 'active' && isWithinNextDays(subscription.nextBillingDate, today, 3)) {
+        nextNotifications.push({
+          id: `cust-sub-${subscription.id}-${subscription.nextBillingDate}`,
+          type: 'subscription',
+          title: t.upcomingRevenue,
+          message: replaceTokens(t.customerSubscriptionRenews, { name: subscription.customerName, date: subscription.nextBillingDate }),
+          date: today,
+          read: false,
+          actionParams: { view: 'subscriptions', itemId: subscription.id },
         });
+      }
+    });
 
-        // Merge with existing notifications to preserve 'read' status if ID matches
-        // In a real app, notifications would be stored in DB. Here we re-generate daily alerts, 
-        // but we can persist read status in localStorage or just in memory for session.
-        // For "real" feel, let's just show them.
-        setNotifications(prev => {
-            // Simple de-dupe based on ID
-            const existingIds = new Set(prev.map(n => n.id));
-            const uniqueNew = newNotifications.filter(n => !existingIds.has(n.id));
-            return [...uniqueNew, ...prev].sort((a, b) => b.date.localeCompare(a.date));
-        });
-    };
+    setNotifications((previous) => {
+      const readById = new Map(previous.map((notification) => [notification.id, notification.read]));
+      return nextNotifications
+        .map((notification) => ({ ...notification, read: readById.get(notification.id) ?? false }))
+        .sort((a, b) => b.date.localeCompare(a.date));
+    });
+  }, [language, t, user]);
 
-    useEffect(() => {
-        refreshNotifications();
-        // Poll every minute or on route change? For now, just once on mount/user-change is enough.
-    }, [user]);
+  useEffect(() => {
+    void refreshNotifications();
+  }, [refreshNotifications]);
 
-    const markAsRead = (id: string) => {
-        setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
-    };
+  const markAsRead = (id: string) => {
+    setNotifications((previous) => previous.map((notification) => notification.id === id ? { ...notification, read: true } : notification));
+  };
 
-    const clearAll = () => {
-        setNotifications([]);
-    };
+  const clearAll = () => setNotifications([]);
+  const unreadCount = notifications.filter((notification) => !notification.read).length;
 
-    const unreadCount = notifications.filter(n => !n.read).length;
-
-    return (
-        <NotificationContext.Provider value={{ notifications, unreadCount, markAsRead, clearAll, refreshNotifications }}>
-            {children}
-        </NotificationContext.Provider>
-    );
+  return (
+    <NotificationContext.Provider value={{ notifications, unreadCount, markAsRead, clearAll, refreshNotifications }}>
+      {children}
+    </NotificationContext.Provider>
+  );
 }
 
 export function useNotifications() {
-    const context = useContext(NotificationContext);
-    if (context === undefined) {
-        throw new Error('useNotifications must be used within a NotificationProvider');
-    }
-    return context;
+  const context = useContext(NotificationContext);
+  if (context === undefined) throw new Error('useNotifications must be used within a NotificationProvider');
+  return context;
 }

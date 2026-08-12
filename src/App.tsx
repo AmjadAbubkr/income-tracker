@@ -24,6 +24,7 @@ import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import './App.css';
 import './mobile.css';
+import './liquid-glass.css';
 
 const queryClient = new QueryClient();
 

@@ -6,6 +6,7 @@ import { useIncomeStore } from '../stores/incomeStore';
 import ProductForm from './ProductForm';
 import { useLanguage } from '../context/LanguageContext';
 import { formatCurrency } from '../utils/currency';
+import { useNotifications } from '../context/NotificationContext';
 
 /* ── Icons ── */
 const MIcon = ({ name, size = 18 }: { name: string; size?: number }) => (
@@ -24,6 +25,8 @@ interface SalesPageProps {
   currency: string;
 }
 
+const ALL_ITEMS = '__all_items__';
+
 export default function SalesPage({ currency }: SalesPageProps) {
   const { t } = useLanguage();
 
@@ -34,12 +37,13 @@ export default function SalesPage({ currency }: SalesPageProps) {
   const { data: products = [] } = useProducts();
   const incomeStore = useIncomeStore();
   const queryClient = useQueryClient();
+  const { refreshNotifications } = useNotifications();
 
   /* ── Local State ── */
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [showIncomeModal, setShowIncomeModal] = useState(false);
   const [saleDate, setSaleDate] = useState(new Date().toISOString().split('T')[0]);
-  const [categoryFilter, setCategoryFilter] = useState('All Items');
+  const [categoryFilter, setCategoryFilter] = useState(ALL_ITEMS);
   const [notes, setNotes] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,13 +53,13 @@ export default function SalesPage({ currency }: SalesPageProps) {
 
   /* ── Derived ── */
   const categories = useMemo(() => {
-    const cats = new Set<string>(['All Items']);
+    const cats = new Set<string>([ALL_ITEMS]);
     products.forEach((p) => p.category && cats.add(p.category));
     return Array.from(cats);
   }, [products]);
 
   const filteredProducts = useMemo(() => {
-    if (categoryFilter === 'All Items') return products;
+    if (categoryFilter === ALL_ITEMS) return products;
     return products.filter((p) => p.category === categoryFilter);
   }, [products, categoryFilter]);
 
@@ -99,11 +103,12 @@ export default function SalesPage({ currency }: SalesPageProps) {
         notes,
       );
       await queryClient.invalidateQueries({ queryKey: ['products'] });
+      await refreshNotifications();
       setCart([]);
       setNotes('');
       setShowIncomeModal(false);
     } catch (error) {
-      alert(error instanceof Error ? error.message : 'Failed to complete sale');
+      alert(error instanceof Error ? error.message : t.failedToCompleteSale);
     } finally {
       setIsSubmitting(false);
     }
@@ -134,6 +139,7 @@ export default function SalesPage({ currency }: SalesPageProps) {
         notes: notesValue || undefined,
       });
       await queryClient.invalidateQueries({ queryKey: ['products'] });
+      await refreshNotifications();
       setEditingSale(null);
     } catch (error) {
       alert(error instanceof Error ? error.message : t.failedToUpdateSale);
@@ -145,6 +151,7 @@ export default function SalesPage({ currency }: SalesPageProps) {
     try {
       await incomeStore.remove(entry.id);
       await queryClient.invalidateQueries({ queryKey: ['products'] });
+      await refreshNotifications();
     } catch (error) {
       alert(error instanceof Error ? error.message : t.failedToDeleteSale);
     }
@@ -167,7 +174,7 @@ export default function SalesPage({ currency }: SalesPageProps) {
             className={`category-btn${categoryFilter === cat ? ' active' : ''}`}
             onClick={() => setCategoryFilter(cat)}
           >
-            {cat}
+            {cat === ALL_ITEMS ? t.allItems : cat}
           </button>
         ))}
       </div>
@@ -179,7 +186,7 @@ export default function SalesPage({ currency }: SalesPageProps) {
             <h3>{product.name}</h3>
             <p className="price">{formatCurrency(product.priceMinor, currency)}</p>
             {product.inventory !== undefined && (
-              <p className="stock">Stock: {product.inventory}</p>
+              <p className="stock">{t.stockLabel.replace('{stock}', String(product.inventory))}</p>
             )}
           </div>
         ))}
@@ -188,7 +195,7 @@ export default function SalesPage({ currency }: SalesPageProps) {
       {/* Cart */}
       {cart.length > 0 && (
         <div className="cart">
-          <h3>Cart</h3>
+          <h3>{t.cart}</h3>
           {cart.map((item) => (
             <div key={item.id} className="cart-item">
               <span>{item.name}</span>
@@ -196,13 +203,13 @@ export default function SalesPage({ currency }: SalesPageProps) {
               <span>{item.quantity}</span>
               <button onClick={() => updateQuantity(item.id, 1)}>+</button>
               <span>{formatCurrency(item.priceMinor * item.quantity, currency)}</span>
-              <button onClick={() => removeFromCart(item.id)}>Remove</button>
+              <button type="button" onClick={() => removeFromCart(item.id)}>{t.remove}</button>
             </div>
           ))}
           <div className="cart-total">
-            <strong>Total: {formatCurrency(cartTotalMinor, currency)}</strong>
+            <strong>{t.total}: {formatCurrency(cartTotalMinor, currency)}</strong>
           </div>
-          <button onClick={() => setShowIncomeModal(true)}>Complete Sale</button>
+          <button type="button" onClick={() => setShowIncomeModal(true)}>{t.completeSale}</button>
         </div>
       )}
 

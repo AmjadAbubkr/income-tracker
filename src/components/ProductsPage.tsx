@@ -4,6 +4,7 @@ import { formatCurrency } from '../utils/currency';
 import { useLanguage } from '../context/LanguageContext';
 import { useProducts, useProductMutations } from '../hooks/useProducts';
 import ProductForm from './ProductForm';
+import { useNotifications } from '../context/NotificationContext';
 
 const EditIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -34,6 +35,7 @@ export default function ProductsPage({
   const { t } = useLanguage();
   const { data: products = [], isLoading, error } = useProducts();
   const mutations = useProductMutations();
+  const { refreshNotifications } = useNotifications();
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>(t.all);
@@ -74,20 +76,26 @@ export default function ProductsPage({
   const handleEditSubmit = async (productData: Omit<Product, 'id' | 'createdAt'>) => {
     if (editingProduct) {
       mutations.update.mutate({ id: editingProduct.id, data: productData }, {
-        onSuccess: () => setEditingProduct(null),
+        onSuccess: () => {
+          setEditingProduct(null);
+          void refreshNotifications();
+        },
       });
     }
   };
 
   const handleAddSubmit = async (productData: Omit<Product, 'id' | 'createdAt'>) => {
     mutations.create.mutate(productData, {
-      onSuccess: () => setIsFormOpen(false),
+      onSuccess: () => {
+        setIsFormOpen(false);
+        void refreshNotifications();
+      },
     });
   };
 
   const handleDelete = (id: string) => {
     if (window.confirm(t.confirmDeleteProduct)) {
-      mutations.delete.mutate(id);
+      mutations.delete.mutate(id, { onSuccess: () => void refreshNotifications() });
     }
   };
 
@@ -112,7 +120,7 @@ export default function ProductsPage({
         </div>
         <div className="empty-state-card">
           <p style={{ color: 'var(--error)' }}>
-            {t.error || 'Error loading products'}: {error.message}
+            {t.errorLoadingProducts}: {error.message}
           </p>
         </div>
       </div>

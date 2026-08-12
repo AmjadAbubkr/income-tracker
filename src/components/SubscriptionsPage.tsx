@@ -5,6 +5,7 @@ import BusinessSubscriptionForm from './BusinessSubscriptionForm';
 import CustomerSubscriptionForm from './CustomerSubscriptionForm';
 import SummaryCard from './SummaryCard';
 import { useSubscriptionStore } from '../stores/subscriptionStore';
+import { useNotifications } from '../context/NotificationContext';
 
 const PlusIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -43,6 +44,7 @@ interface SubscriptionsPageProps {
 export default function SubscriptionsPage({ currency }: SubscriptionsPageProps) {
     const { t } = useLanguage();
     const subscriptionStore = useSubscriptionStore();
+    const { refreshNotifications } = useNotifications();
     const [search, setSearch] = useState('');
     const [showBusinessForm, setShowBusinessForm] = useState(false);
     const [showCustomerForm, setShowCustomerForm] = useState(false);
@@ -113,10 +115,10 @@ export default function SubscriptionsPage({ currency }: SubscriptionsPageProps) 
                                 </div>
                                 <div className="subscription-actions">
                                     <span>{formatCurrency(sub.amountMinor, currency)}</span>
-                                    <button onClick={() => setEditingBusiness(sub.id)} aria-label="Edit">
+                                    <button type="button" onClick={() => setEditingBusiness(sub.id)} aria-label={t.editSubscription}>
                                         <EditIcon />
                                     </button>
-                                    <button onClick={() => subscriptionStore.removeBusiness(sub.id)} aria-label="Delete">
+                                    <button type="button" onClick={() => { void subscriptionStore.removeBusiness(sub.id).then(refreshNotifications); }} aria-label={t.delete}>
                                         <TrashIcon />
                                     </button>
                                 </div>
@@ -146,10 +148,10 @@ export default function SubscriptionsPage({ currency }: SubscriptionsPageProps) 
                                 </div>
                                 <div className="subscription-actions">
                                     <span>{formatCurrency(sub.amountMinor, currency)}</span>
-                                    <button onClick={() => setEditingCustomer(sub.id)} aria-label="Edit">
+                                    <button type="button" onClick={() => setEditingCustomer(sub.id)} aria-label={t.editSubscription}>
                                         <EditIcon />
                                     </button>
-                                    <button onClick={() => subscriptionStore.removeCustomer(sub.id)} aria-label="Delete">
+                                    <button type="button" onClick={() => { void subscriptionStore.removeCustomer(sub.id).then(refreshNotifications); }} aria-label={t.delete}>
                                         <TrashIcon />
                                     </button>
                                 </div>
@@ -169,6 +171,7 @@ export default function SubscriptionsPage({ currency }: SubscriptionsPageProps) 
                         } else {
                             await subscriptionStore.addBusiness(data);
                         }
+                        await refreshNotifications();
                         setShowBusinessForm(false);
                         setEditingBusiness(null);
                     }}
@@ -184,6 +187,7 @@ export default function SubscriptionsPage({ currency }: SubscriptionsPageProps) 
                         } else {
                             await subscriptionStore.addCustomer(data);
                         }
+                        await refreshNotifications();
                         setShowCustomerForm(false);
                         setEditingCustomer(null);
                     }}

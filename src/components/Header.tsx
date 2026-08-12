@@ -53,12 +53,11 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
    * actionParams is typed as Record<string, unknown> instead of `any`
    * so we can safely narrow the `view` value before using it.
    */
-  const handleNotificationClick = (id: string, actionParams?: Record<string, unknown>) => {
+  const handleNotificationClick = (id: string, actionParams?: { view: View; itemId?: string }) => {
     markAsRead(id);
-    const view = actionParams?.['view'];
-    // Narrow: only navigate if view is a non-empty string
-    if (typeof view === 'string' && view.length > 0) {
-      onViewChange(view as View);
+    const validViews: View[] = ['dashboard', 'sales', 'products', 'analytics', 'settings', 'expenses', 'subscriptions'];
+    if (actionParams && validViews.includes(actionParams.view)) {
+      onViewChange(actionParams.view);
     }
     setShowNotifDropdown(false);
   };
@@ -72,13 +71,13 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
           </div>
         </div>
         <div className="header-greeting">
-          <span className="greeting-text">Good Morning,</span>
-          <span className="user-name">{user?.name || 'Alex Morgan'}</span>
+            <span className="greeting-text">{t.goodMorning},</span>
+            <span className="user-name">{user?.name || t.user}</span>
         </div>
       </div>
 
       <div className="header-title-v2 desktop-only">
-        <h1 style={{ fontSize: 'var(--font-xl)', fontWeight: 700, margin: 0 }}>Dashboard Overview</h1>
+        <h1 style={{ fontSize: 'var(--font-xl)', fontWeight: 700, margin: 0 }}>{t.dashboardOverview}</h1>
       </div>
 
       <div className="header-search desktop-only">
@@ -88,11 +87,11 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
           name="search"
           autoComplete="off"
           spellCheck={false}
-          placeholder="Search transactions..."
+          placeholder={t.searchTransactions}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           className="search-input"
-          aria-label="Search transactions"
+          aria-label={t.searchTransactions}
         />
       </div>
 
@@ -119,11 +118,12 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
               </div>
               <div className="dropdown-list">
                 {notifications.length === 0 ? (
-                  <div className="empty-state">No new notifications</div>
+                  <div className="empty-state">{t.noNewNotifications}</div>
                 ) : (
                   notifications.map(n => (
-                    <div
+                    <button
                       key={n.id}
+                      type="button"
                       className={`notif-item ${n.read ? 'read' : 'unread'}`}
                       onClick={() => handleNotificationClick(n.id, n.actionParams)}
                     >
@@ -137,7 +137,7 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
                         <p>{n.message}</p>
                         <span className="notif-time">{n.date}</span>
                       </div>
-                    </div>
+                    </button>
                   ))
                 )}
               </div>
@@ -152,7 +152,7 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
             onClick={() => setShowUserDropdown(!showUserDropdown)}
             style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', background: 'none', border: 'none', padding: 0 }}
             title={user?.name}
-            aria-label={user?.name || 'User menu'}
+            aria-label={user?.name || t.userMenu}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 20 }} aria-hidden="true">person</span>
           </button>
@@ -169,14 +169,14 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
                 </div>
               </div>
               <div className="dropdown-divider"></div>
-              <div className="dropdown-item" onClick={() => { onViewChange('settings'); setShowUserDropdown(false); }}>
+              <button type="button" className="dropdown-item" onClick={() => { onViewChange('settings'); setShowUserDropdown(false); }}>
                 <span className="material-symbols-outlined">settings</span>
                 <span>{t.settings}</span>
-              </div>
-              <div className="dropdown-item logout" onClick={handleLogout}>
+              </button>
+              <button type="button" className="dropdown-item logout" onClick={handleLogout}>
                 <span className="material-symbols-outlined">logout</span>
                 <span>{t.logout}</span>
-              </div>
+              </button>
             </div>
           )}
         </div>
@@ -194,14 +194,14 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
               </div>
             </div>
             <div className="dropdown-divider"></div>
-            <div className="dropdown-item" onClick={() => { onViewChange('settings'); setShowUserDropdown(false); }}>
+            <button type="button" className="dropdown-item" onClick={() => { onViewChange('settings'); setShowUserDropdown(false); }}>
               <span className="material-symbols-outlined">settings</span>
               <span>{t.settings}</span>
-            </div>
-            <div className="dropdown-item logout" onClick={handleLogout}>
+            </button>
+            <button type="button" className="dropdown-item logout" onClick={handleLogout}>
               <span className="material-symbols-outlined">logout</span>
               <span>{t.logout}</span>
-            </div>
+            </button>
           </div>
         )}
 

@@ -65,11 +65,11 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
   return (
     <header className="app-header">
       <div className="header-left-mobile mobile-only">
-        <div className="mobile-user-avatar" onClick={() => setShowUserDropdown(!showUserDropdown)}>
+        <button type="button" className="mobile-user-avatar" onClick={() => setShowUserDropdown(!showUserDropdown)} aria-label={t.userMenu}>
           <div className="avatar-mini-circle">
             {user?.name?.[0]?.toUpperCase() || 'U'}
           </div>
-        </div>
+        </button>
         <div className="header-greeting">
             <span className="greeting-text">{t.goodMorning},</span>
             <span className="user-name">{user?.name || t.user}</span>

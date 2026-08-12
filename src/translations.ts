@@ -303,6 +303,8 @@ const en = {
   collapse: 'Collapse',
   skipToMainContent: 'Skip to main content',
   incomeTracker: 'Income Tracker',
+  increaseQuantity: 'Increase quantity',
+  decreaseQuantity: 'Decrease quantity',
 } as const;
 
 /* ────────────────────────────────────────────────────────── */
@@ -608,6 +610,8 @@ const fr = {
   collapse: 'Réduire',
   skipToMainContent: 'Passer au contenu principal',
   incomeTracker: 'Suivi des revenus',
+  increaseQuantity: 'Augmenter la quantité',
+  decreaseQuantity: 'Diminuer la quantité',
 } as const;
 
 /* ────────────────────────────────────────────────────────── */
@@ -913,6 +917,8 @@ const ar = {
   collapse: 'طي',
   skipToMainContent: 'انتقل إلى المحتوى الرئيسي',
   incomeTracker: 'متتبع الدخل',
+  increaseQuantity: 'زيادة الكمية',
+  decreaseQuantity: 'تقليل الكمية',
 } as const;
 
 export const translations = { en, fr, ar } as const;

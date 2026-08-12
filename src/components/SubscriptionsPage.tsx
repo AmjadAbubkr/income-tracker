@@ -51,6 +51,16 @@ export default function SubscriptionsPage({ currency }: SubscriptionsPageProps) 
     const [editingBusiness, setEditingBusiness] = useState<string | null>(null);
     const [editingCustomer, setEditingCustomer] = useState<string | null>(null);
 
+    const handleRemoveBusiness = async (id: string) => {
+        await subscriptionStore.removeBusiness(id);
+        await refreshNotifications();
+    };
+
+    const handleRemoveCustomer = async (id: string) => {
+        await subscriptionStore.removeCustomer(id);
+        await refreshNotifications();
+    };
+
     const filteredBusiness = useMemo(() => {
         return subscriptionStore.business.filter((s) =>
             s.name.toLowerCase().includes(search.toLowerCase())
@@ -118,7 +128,7 @@ export default function SubscriptionsPage({ currency }: SubscriptionsPageProps) 
                                     <button type="button" onClick={() => setEditingBusiness(sub.id)} aria-label={t.editSubscription}>
                                         <EditIcon />
                                     </button>
-                                    <button type="button" onClick={() => { void subscriptionStore.removeBusiness(sub.id).then(refreshNotifications); }} aria-label={t.delete}>
+                                    <button type="button" onClick={() => { void handleRemoveBusiness(sub.id); }} aria-label={t.delete}>
                                         <TrashIcon />
                                     </button>
                                 </div>
@@ -151,7 +161,7 @@ export default function SubscriptionsPage({ currency }: SubscriptionsPageProps) 
                                     <button type="button" onClick={() => setEditingCustomer(sub.id)} aria-label={t.editSubscription}>
                                         <EditIcon />
                                     </button>
-                                    <button type="button" onClick={() => { void subscriptionStore.removeCustomer(sub.id).then(refreshNotifications); }} aria-label={t.delete}>
+                                    <button type="button" onClick={() => { void handleRemoveCustomer(sub.id); }} aria-label={t.delete}>
                                         <TrashIcon />
                                     </button>
                                 </div>

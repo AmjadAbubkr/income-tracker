@@ -136,38 +136,42 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
 
               <div className="profile-fields-grid-v2">
                 <div className="field-group-v2">
-                  <label className="field-label-v2">{t.firstName || 'First Name'}</label>
+                  <label htmlFor="profile-first-name" className="field-label-v2">{t.firstName}</label>
                   <input
                     type="text"
+                    id="profile-first-name"
                     className="filter-control"
                     value={formData.firstName}
                     onChange={(e) => handleFieldChange('firstName', e.target.value)}
                   />
                 </div>
                 <div className="field-group-v2">
-                  <label className="field-label-v2">{t.lastName || 'Last Name'}</label>
+                  <label htmlFor="profile-last-name" className="field-label-v2">{t.lastName}</label>
                   <input
                     type="text"
+                    id="profile-last-name"
                     className="filter-control"
                     value={formData.lastName}
                     onChange={(e) => handleFieldChange('lastName', e.target.value)}
                   />
                 </div>
                 <div className="field-group-v2 full-width">
-                  <label className="field-label-v2">{t.displayName}</label>
+                  <label htmlFor="profile-display-name" className="field-label-v2">{t.displayName}</label>
                   <input
                     type="text"
+                    id="profile-display-name"
                     className="filter-control"
                     value={formData.name}
                     onChange={(e) => handleFieldChange('name', e.target.value)}
                   />
                 </div>
                 <div className="field-group-v2 full-width">
-                  <label className="field-label-v2">{t.emailAddress}</label>
+                  <label htmlFor="profile-email" className="field-label-v2">{t.emailAddress}</label>
                   <div className="input-with-icon-v2">
                     <MIcon name="mail" />
                     <input
                       type="email"
+                      id="profile-email"
                       className="filter-control"
                       style={{ width: '100%' }}
                       value={formData.email}
@@ -176,8 +180,9 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
                   </div>
                 </div>
                 <div className="field-group-v2 full-width">
-                  <label className="field-label-v2">{t.bio}</label>
+                  <label htmlFor="profile-bio" className="field-label-v2">{t.bio}</label>
                   <textarea
+                    id="profile-bio"
                     className="filter-control textarea-v2"
                     value={formData.bio}
                     onChange={(e) => handleFieldChange('bio', e.target.value)}
@@ -205,8 +210,9 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
                 </span>
                 <span className="security-desc-v2">{t.twoFactorDescription}</span>
               </div>
-              <label className="switch-v2">
-                <input
+                <label htmlFor="two-factor-toggle" className="switch-v2">
+                  <input
+                    id="two-factor-toggle"
                   type="checkbox"
                   checked={formData.is2FA}
                   onChange={(e) => handleFieldChange('is2FA', e.target.checked)}
@@ -226,27 +232,27 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
           <div className="settings-card-body-v2">
             <div className="profile-fields-grid-v2">
               <div className="field-group-v2">
-                <label className="field-label-v2">{t.language}</label>
-                <select value={language} onChange={(e) => setLanguage(e.target.value as Language)} className="filter-control">
+                <label htmlFor="settings-language" className="field-label-v2">{t.language}</label>
+                <select id="settings-language" value={language} onChange={(e) => setLanguage(e.target.value as Language)} className="filter-control">
                   <option value="en">{t.english}</option>
                   <option value="fr">{t.french}</option>
                   <option value="ar">{t.arabic}</option>
                 </select>
               </div>
               <div className="field-group-v2">
-                <label className="field-label-v2">{t.darkMode}</label>
-                <button type="button" className="btn btn-secondary" style={{ height: '42px' }} onClick={toggleTheme}>
+                <label htmlFor="theme-toggle" className="field-label-v2">{t.darkMode}</label>
+                <button id="theme-toggle" type="button" className="btn btn-secondary" style={{ height: '42px' }} onClick={toggleTheme}>
                   {theme === 'dark' ? `🌙 ${t.on}` : `☀️ ${t.off}`}
                 </button>
               </div>
               <div className="field-group-v2">
-                <label className="field-label-v2">{t.defaultCurrency}</label>
-                <select value={currency} onChange={(e) => onCurrencyChange(e.target.value)} className="filter-control">
+                <label htmlFor="settings-currency" className="field-label-v2">{t.defaultCurrency}</label>
+                <select id="settings-currency" value={currency} onChange={(e) => onCurrencyChange(e.target.value)} className="filter-control">
                   {CURRENCIES.map((curr) => <option key={curr.code} value={curr.code}>{curr.symbol} {curr.code}</option>)}
                 </select>
               </div>
               <div className="field-group-v2">
-                <label className="field-label-v2">{t.dataBackup}</label>
+                <span className="field-label-v2">{t.dataBackup}</span>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button type="button" onClick={handleExport} className="btn btn-secondary" style={{ flex: 1 }} disabled={isProcessing} aria-label={t.exportData}>
                     <MIcon name="download" size={16} /> {t.exportData}

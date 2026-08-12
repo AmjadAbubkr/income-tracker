@@ -182,13 +182,13 @@ export default function SalesPage({ currency }: SalesPageProps) {
       {/* Products grid */}
       <div className="products-grid">
         {filteredProducts.map((product) => (
-          <div key={product.id} className="product-card" onClick={() => addToCart(product)}>
+          <button type="button" key={product.id} className="product-card" onClick={() => addToCart(product)} aria-label={`${t.addToCart}: ${product.name}`}>
             <h3>{product.name}</h3>
             <p className="price">{formatCurrency(product.priceMinor, currency)}</p>
             {product.inventory !== undefined && (
               <p className="stock">{t.stockLabel.replace('{stock}', String(product.inventory))}</p>
             )}
-          </div>
+          </button>
         ))}
       </div>
 
@@ -199,9 +199,9 @@ export default function SalesPage({ currency }: SalesPageProps) {
           {cart.map((item) => (
             <div key={item.id} className="cart-item">
               <span>{item.name}</span>
-              <button onClick={() => updateQuantity(item.id, -1)}>-</button>
+              <button type="button" onClick={() => updateQuantity(item.id, -1)} aria-label={t.decreaseQuantity}>-</button>
               <span>{item.quantity}</span>
-              <button onClick={() => updateQuantity(item.id, 1)}>+</button>
+              <button type="button" onClick={() => updateQuantity(item.id, 1)} aria-label={t.increaseQuantity}>+</button>
               <span>{formatCurrency(item.priceMinor * item.quantity, currency)}</span>
               <button type="button" onClick={() => removeFromCart(item.id)}>{t.remove}</button>
             </div>

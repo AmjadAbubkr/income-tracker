@@ -48,12 +48,12 @@ export default function Sidebar({ currentView, onViewChange, isCollapsed, onTogg
    * This fixes the bug where mobile users could not access those views at all.
    */
   const mobileMenuItems = useMemo(() => [
-    { id: 'dashboard' as View, label: t.dashboard || 'Home', icon: <MaterialIcon name="home" />, isMore: false },
+    { id: 'dashboard' as View, label: t.dashboard, icon: <MaterialIcon name="home" />, isMore: false },
     { id: 'analytics' as View, label: t.analytics, icon: <MaterialIcon name="analytics" />, isMore: false },
     { id: 'sales' as View, label: '', icon: <div className="mobile-plus-btn"><MaterialIcon name="add" /></div>, isMore: false },
     { id: 'products' as View, label: t.products, icon: <MaterialIcon name="inventory_2" />, isMore: false },
     // "More" opens the bottom sheet — not a view navigation itself
-    { id: 'more' as View | 'more', label: t.more || 'More', icon: <MaterialIcon name="more_horiz" />, isMore: true },
+    { id: 'more' as View | 'more', label: t.more, icon: <MaterialIcon name="more_horiz" />, isMore: true },
   ], [t]);
 
   // Items hidden in the bottom bar but accessible via the More sheet
@@ -70,16 +70,16 @@ export default function Sidebar({ currentView, onViewChange, isCollapsed, onTogg
 
   return (
     <>
-      <a href="#main-content" className="skip-link" style={{ position: 'absolute', left: '-9999px', zIndex: 9999, padding: '8px 16px', background: 'var(--accent)', color: 'white', textDecoration: 'none' }} onFocus={(e) => e.target.style.left = '0'} onBlur={(e) => e.target.style.left = '-9999px'}>Skip to main content</a>
+      <a href="#main-content" className="skip-link" style={{ position: 'absolute', left: '-9999px', zIndex: 9999, padding: '8px 16px', background: 'var(--accent)', color: 'white', textDecoration: 'none' }} onFocus={(e) => e.target.style.left = '0'} onBlur={(e) => e.target.style.left = '-9999px'}>{t.skipToMainContent}</a>
       <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-header" style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}>
           <div className="sidebar-logo-container" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', overflow: 'hidden' }}>
             <div style={{ background: 'var(--accent-glow)', padding: '6px', borderRadius: 'var(--radius-sm)', color: 'var(--accent)', display: 'flex', flexShrink: 0 }}>
               <span className="material-symbols-outlined" style={{ fontSize: 24 }}>account_balance_wallet</span>
             </div>
-            <h2 className="sidebar-logo">Income Tracker</h2>
+            <h2 className="sidebar-logo">{t.incomeTracker}</h2>
           </div>
-          <button className="sidebar-toggle" onClick={onToggleCollapse} title={isCollapsed ? 'Expand' : 'Collapse'} aria-label={isCollapsed ? 'Expand' : 'Collapse'}>
+          <button type="button" className="sidebar-toggle" onClick={onToggleCollapse} title={isCollapsed ? t.expand : t.collapse} aria-label={isCollapsed ? t.expand : t.collapse}>
             <MaterialIcon name={isCollapsed ? 'chevron_right' : 'chevron_left'} />
           </button>
         </div>

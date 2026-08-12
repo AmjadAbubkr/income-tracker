@@ -43,6 +43,15 @@ const translations = {
 vi.mock('../src/context/LanguageContext', () => ({
   useLanguage: () => ({ t: translations }),
 }));
+vi.mock('../src/context/NotificationContext', () => ({
+  useNotifications: () => ({
+    notifications: [],
+    unreadCount: 0,
+    markAsRead: vi.fn(),
+    clearAll: vi.fn(),
+    refreshNotifications: vi.fn(async () => undefined),
+  }),
+}));
 vi.mock('../src/hooks/useProducts', () => ({
   useProducts: () => ({ data: [] }),
 }));

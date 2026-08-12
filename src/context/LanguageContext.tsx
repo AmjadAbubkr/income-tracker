@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { translations, type TranslationKey } from '../translations';
 
-type Language = 'en' | 'fr' | 'ar';
+export type Language = 'en' | 'fr' | 'ar';
 
 export type { TranslationKey };
 

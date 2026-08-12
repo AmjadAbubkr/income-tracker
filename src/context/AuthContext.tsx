@@ -225,7 +225,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const localUser = await storage.auth.getUserById(user.id);
             if (!localUser) return false;
 
-            const updatedUser = { ...localUser, ...data };
+            const email = data.email?.trim().toLowerCase();
+            if ('email' in data && (!email || !/^\S+@\S+\.\S+$/.test(email))) return false;
+            if (email && email !== localUser.email.toLowerCase()) {
+                const existingUser = await storage.auth.getUserByEmail(email);
+                if (existingUser && existingUser.id !== localUser.id) return false;
+            }
+
+            const updatedUser = { ...localUser, ...data, ...(email ? { email } : {}) };
             await storage.auth.updateUser(updatedUser);
             const publicUser: User = {
                 id: updatedUser.id,

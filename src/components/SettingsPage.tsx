@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { CURRENCIES } from '../utils/currency';
 import { backupService } from '../utils/backup';
 import { useTheme } from '../context/ThemeContext';
-import { useLanguage } from '../context/LanguageContext';
+import { Language, useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import CategoryManager from './CategoryManager';
 
@@ -58,6 +58,7 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
       name: formData.name,
       firstName: formData.firstName,
       lastName: formData.lastName,
+      email: formData.email,
       bio: formData.bio,
       is2FA: formData.is2FA
     });
@@ -66,7 +67,7 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
     if (success) {
       alert(t.settingsSaved || 'Settings saved successfully!');
     } else {
-      alert(t.failedToSaveSettings || 'Failed to save settings.');
+      alert(t.failedToSaveSettings);
     }
   };
 
@@ -109,7 +110,7 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
       <div className="page-header">
         <div style={{ flex: 1 }}>
           <h1>{t.settings}</h1>
-          <p className="page-subtitle">Manage your account details and application preferences.</p>
+          <p className="page-subtitle">{t.settingsSubtitle}</p>
         </div>
         <div className="header-actions">
           <button className="btn btn-primary" onClick={handleSave} disabled={isProcessing} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -122,8 +123,8 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
         {/* Profile Information Section */}
         <section className="settings-card-v2">
           <div className="settings-card-header-v2">
-            <h2>Profile Information</h2>
-            <p>Update your photo and personal details.</p>
+            <h2>{t.profileInformation}</h2>
+            <p>{t.profileInformationDescription}</p>
           </div>
           <div className="settings-card-body-v2">
             <div className="profile-layout-v2">
@@ -153,7 +154,7 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
                   />
                 </div>
                 <div className="field-group-v2 full-width">
-                  <label className="field-label-v2">Display Name</label>
+                  <label className="field-label-v2">{t.displayName}</label>
                   <input
                     type="text"
                     className="filter-control"
@@ -169,13 +170,13 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
                       type="email"
                       className="filter-control"
                       style={{ width: '100%' }}
-                      disabled
                       value={formData.email}
+                      onChange={(e) => handleFieldChange('email', e.target.value)}
                     />
                   </div>
                 </div>
                 <div className="field-group-v2 full-width">
-                  <label className="field-label-v2">Bio</label>
+                  <label className="field-label-v2">{t.bio}</label>
                   <textarea
                     className="filter-control textarea-v2"
                     value={formData.bio}
@@ -192,17 +193,17 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
         {/* Account Security Section */}
         <section className="settings-card-v2">
           <div className="settings-card-header-v2">
-            <h2>Account Security</h2>
-            <p>Manage your security settings.</p>
+            <h2>{t.accountSecurity}</h2>
+            <p>{t.accountSecurityDescription}</p>
           </div>
           <div className="settings-card-body-v2">
             <div className="security-item-v2">
               <div className="security-info-v2">
                 <span className="security-title-v2">
-                  Two-Factor Authentication
-                  {formData.is2FA && <span className="badge-v2 badge-success-v2">Enabled</span>}
+                  {t.twoFactorAuthentication}
+                  {formData.is2FA && <span className="badge-v2 badge-success-v2">{t.enabled}</span>}
                 </span>
-                <span className="security-desc-v2">Add an extra layer of security to your account.</span>
+                <span className="security-desc-v2">{t.twoFactorDescription}</span>
               </div>
               <label className="switch-v2">
                 <input
@@ -219,17 +220,17 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
         {/* System Preferences Section */}
         <section className="settings-card-v2">
           <div className="settings-card-header-v2">
-            <h2>System Preferences</h2>
-            <p>Configure regional, language, and theme settings.</p>
+            <h2>{t.systemPreferences}</h2>
+            <p>{t.systemPreferencesDescription}</p>
           </div>
           <div className="settings-card-body-v2">
             <div className="profile-fields-grid-v2">
               <div className="field-group-v2">
                 <label className="field-label-v2">{t.language}</label>
-                <select value={language} onChange={(e) => setLanguage(e.target.value as any)} className="filter-control">
-                  <option value="en">English</option>
-                  <option value="fr">Français</option>
-                  <option value="ar">العربية</option>
+                <select value={language} onChange={(e) => setLanguage(e.target.value as Language)} className="filter-control">
+                  <option value="en">{t.english}</option>
+                  <option value="fr">{t.french}</option>
+                  <option value="ar">{t.arabic}</option>
                 </select>
               </div>
               <div className="field-group-v2">
@@ -245,15 +246,15 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
                 </select>
               </div>
               <div className="field-group-v2">
-                <label className="field-label-v2">Data Backup</label>
+                <label className="field-label-v2">{t.dataBackup}</label>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button type="button" onClick={handleExport} className="btn btn-secondary" style={{ flex: 1 }} disabled={isProcessing} aria-label="Export data">
-                    <MIcon name="download" size={16} /> Export
+                  <button type="button" onClick={handleExport} className="btn btn-secondary" style={{ flex: 1 }} disabled={isProcessing} aria-label={t.exportData}>
+                    <MIcon name="download" size={16} /> {t.exportData}
                   </button>
                   <div style={{ flex: 1 }}>
                     <input type="file" id="backup-file" accept=".json" onChange={handleImport} disabled={isProcessing} className="hidden-input" />
                     <label htmlFor="backup-file" className={`btn btn-secondary ${isProcessing ? 'disabled' : ''}`} style={{ width: '100%', cursor: 'pointer' }}>
-                      <MIcon name="upload" size={16} /> Import
+                      <MIcon name="upload" size={16} /> {t.importData}
                     </label>
                   </div>
                 </div>
@@ -265,8 +266,8 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
     {/* Product Categories Section */}
     <section className="settings-card-v2">
       <div className="settings-card-header-v2">
-        <h2>Product Categories</h2>
-        <p>Organize your products into categories.</p>
+        <h2>{t.productCategories}</h2>
+        <p>{t.productCategoriesDescription}</p>
       </div>
       <div className="settings-card-body-v2">
         <CategoryManager />

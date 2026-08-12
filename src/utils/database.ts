@@ -469,8 +469,182 @@ export class Database {
     return this.addOneForUser<IncomeEntry>(INCOME_STORE, entry);
   }
 
+  async updateIncomeEntry(
+    id: string,
+    changes: Partial<Omit<IncomeEntry, 'id' | 'userId'>>
+  ): Promise<IncomeEntry> {
+    if (!this.currentUserId) throw new Error('No user logged in');
+    const userId = this.currentUserId;
+    const db = await this.ensureDB();
+
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([PRODUCTS_STORE, INCOME_STORE], 'readwrite');
+      const productsStore = transaction.objectStore(PRODUCTS_STORE);
+      const incomeStore = transaction.objectStore(INCOME_STORE);
+      let updatedEntry: IncomeEntry | undefined;
+      let settled = false;
+
+      const fail = (error: unknown) => {
+        if (!settled) {
+          settled = true;
+          reject(error instanceof Error ? error : new Error('Failed to update sale'));
+        }
+      };
+
+      const incomeRequest = incomeStore.get(id);
+      incomeRequest.onerror = () => fail(incomeRequest.error);
+      incomeRequest.onsuccess = () => {
+        const existing = incomeRequest.result as IncomeEntry | undefined;
+        if (!existing || existing.userId !== userId) {
+          fail(new Error('Record does not belong to the current user'));
+          transaction.abort();
+          return;
+        }
+
+        const next = { ...existing, ...changes, id, userId } as IncomeEntry;
+        if (!isDateOnly(next.date) || !Number.isSafeInteger(next.quantity) || next.quantity <= 0
+          || !isSafeMinorUnit(next.amountMinor)) {
+          fail(new Error('Sale data is invalid'));
+          transaction.abort();
+          return;
+        }
+
+        const productIds = Array.from(new Set([existing.productId, next.productId]));
+        const products = new Map<string, Product | undefined>();
+        let remaining = productIds.length;
+
+        const applyUpdate = () => {
+          try {
+            const oldProduct = products.get(existing.productId);
+            const nextProduct = products.get(next.productId);
+            if (next.productId !== existing.productId && !nextProduct) {
+              throw new Error('Product does not belong to the current user');
+            }
+            if (oldProduct && oldProduct.userId !== userId) {
+              throw new Error('Product does not belong to the current user');
+            }
+            if (nextProduct && nextProduct.userId !== userId) {
+              throw new Error('Product does not belong to the current user');
+            }
+
+            const updatedProducts = new Map<string, Product>();
+            if (oldProduct && existing.productId === next.productId) {
+              if (oldProduct.inventory !== undefined) {
+                const inventory = oldProduct.inventory + existing.quantity - next.quantity;
+                if (!Number.isSafeInteger(inventory) || inventory < 0) {
+                  throw new Error('Insufficient stock');
+                }
+                updatedProducts.set(oldProduct.id, { ...oldProduct, inventory });
+              }
+            } else {
+              if (oldProduct?.inventory !== undefined) {
+                const inventory = oldProduct.inventory + existing.quantity;
+                if (!Number.isSafeInteger(inventory) || inventory < 0) {
+                  throw new Error('Stock value is invalid');
+                }
+                updatedProducts.set(oldProduct.id, { ...oldProduct, inventory });
+              }
+              if (nextProduct?.inventory !== undefined) {
+                if (nextProduct.inventory < next.quantity) throw new Error('Insufficient stock');
+                updatedProducts.set(nextProduct.id, {
+                  ...nextProduct,
+                  inventory: nextProduct.inventory - next.quantity,
+                });
+              }
+            }
+
+            updatedProducts.forEach((product) => productsStore.put(product));
+            incomeStore.put(next);
+            updatedEntry = next;
+          } catch (error) {
+            fail(error);
+            transaction.abort();
+          }
+        };
+
+        productIds.forEach((productId) => {
+          const productRequest = productsStore.get(productId);
+          productRequest.onerror = () => fail(productRequest.error);
+          productRequest.onsuccess = () => {
+            products.set(productId, productRequest.result as Product | undefined);
+            remaining -= 1;
+            if (remaining === 0) applyUpdate();
+          };
+        });
+      };
+
+      transaction.oncomplete = () => {
+        if (!settled) {
+          settled = true;
+          resolve(updatedEntry!);
+        }
+      };
+      transaction.onerror = () => fail(transaction.error);
+      transaction.onabort = () => fail(transaction.error || new Error('Sale update transaction aborted'));
+    });
+  }
+
   async deleteIncomeEntry(id: string): Promise<void> {
-    return this.deleteItem(INCOME_STORE, id);
+    if (!this.currentUserId) throw new Error('No user logged in');
+    const userId = this.currentUserId;
+    const db = await this.ensureDB();
+
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([PRODUCTS_STORE, INCOME_STORE], 'readwrite');
+      const productsStore = transaction.objectStore(PRODUCTS_STORE);
+      const incomeStore = transaction.objectStore(INCOME_STORE);
+      let settled = false;
+
+      const fail = (error: unknown) => {
+        if (!settled) {
+          settled = true;
+          reject(error instanceof Error ? error : new Error('Failed to delete sale'));
+        }
+      };
+
+      const request = incomeStore.get(id);
+      request.onerror = () => fail(request.error);
+      request.onsuccess = () => {
+        const entry = request.result as IncomeEntry | undefined;
+        if (!entry || entry.userId !== userId) {
+          fail(new Error('Record does not belong to the current user'));
+          transaction.abort();
+          return;
+        }
+
+        const productRequest = productsStore.get(entry.productId);
+        productRequest.onerror = () => fail(productRequest.error);
+        productRequest.onsuccess = () => {
+          const product = productRequest.result as Product | undefined;
+          if (product?.userId === userId && product.inventory !== undefined) {
+            const inventory = product.inventory + entry.quantity;
+            if (!Number.isSafeInteger(inventory)) {
+              fail(new Error('Stock value is invalid'));
+              transaction.abort();
+              return;
+            }
+            productsStore.put({ ...product, inventory });
+          }
+          incomeStore.delete(id);
+        };
+      };
+
+      transaction.oncomplete = () => {
+        if (!settled) {
+          settled = true;
+          resolve();
+        }
+      };
+      transaction.onerror = () => fail(transaction.error);
+      transaction.onabort = () => fail(transaction.error || new Error('Sale delete transaction aborted'));
+    });
+  }
+
+  async updateExpense(
+    id: string,
+    changes: Partial<Omit<Expense, 'id' | 'userId'>>
+  ): Promise<Expense> {
+    return this.updateOneForUser<Expense>(EXPENSES_STORE, id, changes);
   }
 
   /* ── Expenses ── */

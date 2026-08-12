@@ -8,6 +8,8 @@ import { create }  from 'zustand';
   fetch: () => Promise<void>;
   add: (entry: Omit<IncomeEntry, 'id'>) => Promise<void>;
   checkout: (items: Array<{ productId: string; quantity: number }>, date: string, notes?: string) => Promise<void>;
+  update: (id: string, changes: Partial<Omit<IncomeEntry, 'id' | 'userId'>>) => Promise<void>;
+  remove: (id: string) => Promise<void>;
   removeByProductId: (productId: string) => Promise<void>;
     clear: () => void;
     dailyStats: {
@@ -37,17 +39,31 @@ import { create }  from 'zustand';
       set({ entries: [...get().entries, newEntry] });
     },
 
-    checkout: async (items, date, notes) => {
+  checkout: async (items, date, notes) => {
       const { storage } = await import('../utils/storage');
       const result = await storage.checkout(items, date, notes);
       result.entries.forEach((entry) => dailyStatsStorage.addSale(entry.amountMinor, entry.quantity));
       set({ entries: [...get().entries, ...result.entries] });
     },
 
+    update: async (id, changes) => {
+      const { storage } = await import('../utils/storage');
+      const updatedEntry = await storage.updateIncomeEntry(id, changes);
+      set({ entries: get().entries.map((entry) => entry.id === id ? updatedEntry : entry) });
+    },
+
+    remove: async (id) => {
+      const { storage } = await import('../utils/storage');
+      await storage.deleteIncomeEntry(id);
+      set({ entries: get().entries.filter((entry) => entry.id !== id) });
+    },
+
     removeByProductId: async (productId) => {
       const { storage } = await import('../utils/storage');
       const removed = get().entries.filter((e) => e.productId === productId);
-      await Promise.all(removed.map((entry) => storage.deleteIncomeEntry(entry.id)));
+      for (const entry of removed) {
+        await storage.deleteIncomeEntry(entry.id);
+      }
       const updated = get().entries.filter((e) => e.productId !== productId);
       set({ entries: updated });
     },

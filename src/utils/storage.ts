@@ -56,6 +56,13 @@ export const storage = {
     return database.addIncomeEntry(entry);
   },
 
+  async updateIncomeEntry(
+    id: string,
+    changes: Partial<Omit<IncomeEntry, 'id' | 'userId'>>
+  ): Promise<IncomeEntry> {
+    return database.updateIncomeEntry(id, changes);
+  },
+
   async deleteIncomeEntry(id: string): Promise<void> {
     return database.deleteIncomeEntry(id);
   },
@@ -71,6 +78,13 @@ export const storage = {
 
   async addExpense(expense: Expense): Promise<void> {
     return database.addExpense(expense);
+  },
+
+  async updateExpense(
+    id: string,
+    changes: Partial<Omit<Expense, 'id' | 'userId'>>
+  ): Promise<Expense> {
+    return database.updateExpense(id, changes);
   },
 
   async deleteExpense(id: string): Promise<void> {

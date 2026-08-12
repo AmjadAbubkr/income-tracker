@@ -1,16 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+import type { View } from '../types';
 
 interface SidebarProps {
-  currentView: string;
-  onViewChange: (view: string) => void;
+  currentView: View;
+  onViewChange: (view: View) => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
 }
 
 const MaterialIcon = ({ name }: { name: string }) => (
-  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>{name}</span>
+  <span className="material-symbols-outlined" style={{ fontSize: 20 }} aria-hidden="true">{name}</span>
 );
 
 export default function Sidebar({ currentView, onViewChange, isCollapsed, onToggleCollapse }: SidebarProps) {
@@ -20,6 +21,7 @@ export default function Sidebar({ currentView, onViewChange, isCollapsed, onTogg
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const moreSheetRef = useRef<HTMLDivElement | null>(null);
 
+  // Detect mobile screen size and update when viewport changes
   useEffect(() => {
     const media = window.matchMedia('(max-width: 768px)');
     const update = () => setIsMobile(media.matches);
@@ -28,49 +30,56 @@ export default function Sidebar({ currentView, onViewChange, isCollapsed, onTogg
     return () => media.removeEventListener('change', update);
   }, []);
 
+  // Full desktop sidebar navigation
   const menuItems = useMemo(() => [
-    { id: 'dashboard', label: t.dashboard, icon: <MaterialIcon name="dashboard" /> },
-    { id: 'sales', label: t.sales, icon: <MaterialIcon name="point_of_sale" /> },
-    { id: 'expenses', label: t.expenses, icon: <MaterialIcon name="receipt_long" /> },
-    { id: 'products', label: t.products, icon: <MaterialIcon name="inventory_2" /> },
-    { id: 'subscriptions', label: t.subscriptions, icon: <MaterialIcon name="autorenew" /> },
-    { id: 'analytics', label: t.analytics, icon: <MaterialIcon name="bar_chart" /> },
-    { id: 'settings', label: t.settings, icon: <MaterialIcon name="settings" /> },
+    { id: 'dashboard' as View, label: t.dashboard, icon: <MaterialIcon name="dashboard" /> },
+    { id: 'sales' as View, label: t.sales, icon: <MaterialIcon name="point_of_sale" /> },
+    { id: 'expenses' as View, label: t.expenses, icon: <MaterialIcon name="receipt_long" /> },
+    { id: 'products' as View, label: t.products, icon: <MaterialIcon name="inventory_2" /> },
+    { id: 'subscriptions' as View, label: t.subscriptions, icon: <MaterialIcon name="autorenew" /> },
+    { id: 'analytics' as View, label: t.analytics, icon: <MaterialIcon name="bar_chart" /> },
+    { id: 'settings' as View, label: t.settings, icon: <MaterialIcon name="settings" /> },
   ], [t]);
 
+  /**
+   * Mobile bottom-bar shows 5 items.
+   * The last slot is a "More" trigger (not a view) — clicking it opens the
+   * bottom sheet that contains Expenses, Subscriptions, and Settings.
+   * This fixes the bug where mobile users could not access those views at all.
+   */
   const mobileMenuItems = useMemo(() => [
-    { id: 'dashboard', label: t.dashboard || 'Home', icon: <MaterialIcon name="home" /> },
-    { id: 'analytics', label: t.analytics, icon: <MaterialIcon name="analytics" /> },
-    { id: 'sales', label: '', icon: <div className="mobile-plus-btn"><MaterialIcon name="add" /></div> },
-    { id: 'products', label: t.products, icon: <MaterialIcon name="inventory_2" /> },
-    { id: 'settings', label: t.settings, icon: <MaterialIcon name="settings" /> },
+    { id: 'dashboard' as View, label: t.dashboard, icon: <MaterialIcon name="home" />, isMore: false },
+    { id: 'analytics' as View, label: t.analytics, icon: <MaterialIcon name="analytics" />, isMore: false },
+    { id: 'sales' as View, label: '', icon: <div className="mobile-plus-btn"><MaterialIcon name="add" /></div>, isMore: false },
+    { id: 'products' as View, label: t.products, icon: <MaterialIcon name="inventory_2" />, isMore: false },
+    // "More" opens the bottom sheet — not a view navigation itself
+    { id: 'more' as View | 'more', label: t.more, icon: <MaterialIcon name="more_horiz" />, isMore: true },
   ], [t]);
 
-  const moreIds = ['expenses', 'subscriptions'];
+  // Items hidden in the bottom bar but accessible via the More sheet
+  const moreIds: View[] = ['expenses', 'subscriptions', 'settings'];
   const moreItems = menuItems.filter((item) => moreIds.includes(item.id));
 
-  const handleNavigate = (view: string) => {
+  // Navigate to a view and close the More sheet
+  const handleNavigate = (view: View) => {
     onViewChange(view);
     setIsMoreOpen(false);
   };
 
-  const closeMore = () => {
-    setIsMoreOpen(false);
-  };
+  const closeMore = () => setIsMoreOpen(false);
 
   return (
     <>
+      <a href="#main-content" className="skip-link" style={{ position: 'absolute', left: '-9999px', zIndex: 9999, padding: '8px 16px', background: 'var(--accent)', color: 'white', textDecoration: 'none' }} onFocus={(e) => e.target.style.left = '0'} onBlur={(e) => e.target.style.left = '-9999px'}>{t.skipToMainContent}</a>
       <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-header" style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}>
-          {!isCollapsed && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div style={{ background: 'rgba(17, 82, 212, 0.15)', padding: '6px', borderRadius: '8px', color: '#1152d4', display: 'flex' }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 24 }}>account_balance_wallet</span>
-              </div>
-              <h2 className="sidebar-logo">Income Tracker</h2>
+          <div className="sidebar-logo-container" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', overflow: 'hidden' }}>
+            <div style={{ background: 'var(--accent-glow)', padding: '6px', borderRadius: 'var(--radius-sm)', color: 'var(--accent)', display: 'flex', flexShrink: 0 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 24 }}>account_balance_wallet</span>
             </div>
-          )}
-          <button className="sidebar-toggle" onClick={onToggleCollapse} title={isCollapsed ? 'Expand' : 'Collapse'}>
+            <h2 className="sidebar-logo">{t.incomeTracker}</h2>
+          </div>
+          <button type="button" className="sidebar-toggle" onClick={onToggleCollapse} title={isCollapsed ? t.expand : t.collapse} aria-label={isCollapsed ? t.expand : t.collapse}>
             <MaterialIcon name={isCollapsed ? 'chevron_right' : 'chevron_left'} />
           </button>
         </div>
@@ -80,7 +89,14 @@ export default function Sidebar({ currentView, onViewChange, isCollapsed, onTogg
               <button
                 key={item.id}
                 className={`sidebar-item ${currentView === item.id ? 'active' : ''} ${item.id === 'sales' ? 'plus-item' : ''}`}
-                onClick={() => handleNavigate(item.id)}
+                onClick={() => {
+                  if (item.isMore) {
+                    // Toggle the More bottom sheet instead of navigating
+                    setIsMoreOpen((prev) => !prev);
+                  } else {
+                    handleNavigate(item.id as View);
+                  }
+                }}
               >
                 <span className="sidebar-icon">{item.icon}</span>
                 {item.label && <span className="sidebar-label">{item.label}</span>}
@@ -95,31 +111,15 @@ export default function Sidebar({ currentView, onViewChange, isCollapsed, onTogg
                 title={isCollapsed ? item.label : undefined}
               >
                 <span className="sidebar-icon">{item.icon}</span>
-                {!isCollapsed && <span className="sidebar-label">{item.label}</span>}
+                <span className="sidebar-label">{item.label}</span>
               </button>
             ))
           )}
         </nav>
-        {!isMobile && (
-          <div className="sidebar-profile desktop-only">
-            <div className="profile-avatar-mini" style={{
-              width: '32px', height: '32px', background: 'var(--accent)', borderRadius: '8px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
-              fontWeight: '600', fontSize: '14px', flexShrink: 0
-            }}>
-              {user?.name?.[0]?.toUpperCase() || 'U'}
-            </div>
-            {!isCollapsed && (
-              <div className="profile-info">
-                <span className="profile-name">{user?.name || 'User'}</span>
-                <span className="profile-email">{user?.email || ''}</span>
-              </div>
-            )}
-            {!isCollapsed && <MaterialIcon name="unfold_more" />}
-          </div>
-        )}
+
       </aside>
 
+      {/* Mobile bottom sheet — slides up when "More" is tapped */}
       {isMobile && isMoreOpen && (
         <div ref={moreSheetRef} className="more-sheet open">
           <div className="more-sheet-handle" />

@@ -1,7 +1,7 @@
 interface DailyStats {
   date: string;
   totalSales: number;
-  totalRevenue: number;
+  totalRevenueMinor: number;
   totalItems: number;
 }
 
@@ -29,34 +29,34 @@ export const dailyStatsStorage = {
   getTodayStats(): DailyStats {
     const today = new Date().toISOString().split('T')[0];
     const allStats = this.getDailyStats();
-    return allStats[today] || { date: today, totalSales: 0, totalRevenue: 0, totalItems: 0 };
+    return allStats[today] || { date: today, totalSales: 0, totalRevenueMinor: 0, totalItems: 0 };
   },
 
   updateTodayStats(update: Partial<DailyStats>): void {
     const today = new Date().toISOString().split('T')[0];
     const allStats = this.getDailyStats();
     const todayStats = this.getTodayStats();
-    
+
     allStats[today] = {
       ...todayStats,
       ...update,
       date: today,
     };
-    
+
     this.saveDailyStats(allStats);
   },
 
   resetIfNewDay(): void {
     const today = new Date().toISOString().split('T')[0];
     const lastReset = this.getLastResetDate();
-    
+
     if (lastReset !== today) {
       // New day - reset today's stats
       const allStats = this.getDailyStats();
       allStats[today] = {
         date: today,
         totalSales: 0,
-        totalRevenue: 0,
+        totalRevenueMinor: 0,
         totalItems: 0,
       };
       this.saveDailyStats(allStats);
@@ -64,12 +64,12 @@ export const dailyStatsStorage = {
     }
   },
 
-  addSale(revenue: number, items: number): void {
+  addSale(revenueMinor: number, items: number): void {
     this.resetIfNewDay();
     const todayStats = this.getTodayStats();
     this.updateTodayStats({
       totalSales: todayStats.totalSales + 1,
-      totalRevenue: todayStats.totalRevenue + revenue,
+      totalRevenueMinor: todayStats.totalRevenueMinor + revenueMinor,
       totalItems: todayStats.totalItems + items,
     });
   },
@@ -77,4 +77,3 @@ export const dailyStatsStorage = {
 
 // Initialize on import
 dailyStatsStorage.resetIfNewDay();
-

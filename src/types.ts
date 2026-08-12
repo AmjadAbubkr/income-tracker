@@ -4,7 +4,11 @@ export interface User {
   name: string;
   firstName?: string;
   lastName?: string;
-  password?: string; // In a real app, this would be hashed. Storing simply here for local demo.
+  /**
+   * Password is stored as a SHA-256 hex hash (see src/utils/crypto.ts).
+   * Never stored in plaintext.
+   */
+  password?: string;
   avatar?: string;
   bio?: string;
   is2FA?: boolean;
@@ -15,7 +19,8 @@ export interface Product {
   id: string;
   userId?: string;
   name: string;
-  price: number;
+  /** Integer ISO currency minor units. Never persist a decimal money value. */
+  priceMinor: number;
   description?: string;
   image?: string; // Base64 encoded image or URL
   inventory?: number; // Current stock quantity
@@ -28,7 +33,8 @@ export interface IncomeEntry {
   userId?: string;
   productId: string;
   quantity: number;
-  amount: number;
+  /** Integer ISO currency minor units. Never persist a decimal money value. */
+  amountMinor: number;
   date: string;
   notes?: string;
 }
@@ -37,7 +43,7 @@ export interface Expense {
   id: string;
   userId?: string;
   category: string;
-  amount: number;
+  amountMinor: number;
   date: string;
   description: string;
 }
@@ -46,7 +52,7 @@ export interface BusinessSubscription {
   id: string;
   userId?: string;
   name: string;
-  amount: number;
+  amountMinor: number;
   billingCycle: 'monthly' | 'yearly';
   category: string;
   nextBillingDate: string;
@@ -58,7 +64,7 @@ export interface CustomerSubscription {
   userId?: string;
   customerName: string;
   serviceName: string;
-  amount: number;
+  amountMinor: number;
   billingCycle: 'monthly' | 'yearly';
   startDate: string;
   nextBillingDate: string;
@@ -67,8 +73,28 @@ export interface CustomerSubscription {
 }
 
 export interface ProductWithIncome extends Product {
-  totalIncome: number;
+  totalIncomeMinor: number;
   totalQuantity: number;
   lastSaleDate?: string;
 }
 
+export interface Category {
+  id: string;
+  userId: string;
+  name: string;
+  createdAt: string;
+}
+
+/**
+ * All navigable view names used throughout the app.
+ * Centralising here prevents typos and enables strict prop typing
+ * across Header, Sidebar, and App without using loose `string` or `any`.
+ */
+export type View =
+  | 'dashboard'
+  | 'sales'
+  | 'products'
+  | 'analytics'
+  | 'settings'
+  | 'expenses'
+  | 'subscriptions';

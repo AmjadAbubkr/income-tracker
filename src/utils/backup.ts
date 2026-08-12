@@ -1,34 +1,43 @@
 import { storage } from './storage';
-import { Product, IncomeEntry, Expense } from '../types';
+import { Product, IncomeEntry, Expense, Category, BusinessSubscription, CustomerSubscription } from '../types';
 
 interface BackupData {
-    version: number;
-    timestamp: string;
-    data: {
-        products: Product[];
-        incomeEntries: IncomeEntry[];
-        expenses: Expense[];
-    };
+  version: number;
+  timestamp: string;
+  data: {
+    products: Product[];
+    incomeEntries: IncomeEntry[];
+    expenses: Expense[];
+    categories: Category[];
+    businessSubscriptions: BusinessSubscription[];
+    customerSubscriptions: CustomerSubscription[];
+  };
 }
 
 export const backupService = {
-    async exportData(): Promise<void> {
-        try {
-            const [products, incomeEntries, expenses] = await Promise.all([
-                storage.getProducts(),
-                storage.getIncomeEntries(),
-                storage.getExpenses(),
-            ]);
+  async exportData(): Promise<void> {
+    try {
+      const [products, incomeEntries, expenses, categories, businessSubscriptions, customerSubscriptions] = await Promise.all([
+        storage.getProducts(),
+        storage.getIncomeEntries(),
+        storage.getExpenses(),
+        storage.getCategories(),
+        storage.getBusinessSubscriptions(),
+        storage.getCustomerSubscriptions(),
+      ]);
 
-            const backup: BackupData = {
-                version: 1,
-                timestamp: new Date().toISOString(),
-                data: {
-                    products,
-                    incomeEntries,
-                    expenses,
-                },
-            };
+      const backup: BackupData = {
+        version: 1,
+        timestamp: new Date().toISOString(),
+        data: {
+          products,
+          incomeEntries,
+          expenses,
+          categories,
+          businessSubscriptions,
+          customerSubscriptions,
+        },
+      };
 
             const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -54,21 +63,19 @@ export const backupService = {
                     const content = event.target?.result as string;
                     const backup: BackupData = JSON.parse(content);
 
-                    // Basic validation
-                    if (!backup.data || !Array.isArray(backup.data.products) || !Array.isArray(backup.data.incomeEntries)) {
-                        throw new Error('Invalid backup file format');
-                    }
+      // Basic validation
+      if (!backup.data || !Array.isArray(backup.data.products) || !Array.isArray(backup.data.incomeEntries)) {
+        throw new Error('Invalid backup file format');
+      }
 
-                    // Clear existing data and restore backup
-                    // We save sequentially to avoid race conditions with DB connections if any
-                    await storage.saveProducts(backup.data.products);
-                    await storage.saveIncomeEntries(backup.data.incomeEntries);
-
-                    if (backup.data.expenses) {
-                        await storage.saveExpenses(backup.data.expenses);
-                    } else {
-                        await storage.saveExpenses([]);
-                    }
+      await storage.restoreBackup({
+        products: backup.data.products,
+        incomeEntries: backup.data.incomeEntries,
+        expenses: backup.data.expenses || [],
+        categories: backup.data.categories || [],
+        businessSubscriptions: backup.data.businessSubscriptions || [],
+        customerSubscriptions: backup.data.customerSubscriptions || [],
+      });
 
                     resolve();
                 } catch (error) {

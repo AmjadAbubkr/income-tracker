@@ -68,7 +68,7 @@ export default function IncomeEntryForm({
       await onSubmit({
         productId,
         quantity,
-        amount: product.price * quantity,
+        amountMinor: product.priceMinor * quantity,
         date,
         notes: notes.trim() || undefined,
       });
@@ -98,6 +98,7 @@ export default function IncomeEntryForm({
           <label htmlFor={`${formId}-date`}>{t.date}</label>
           <input
             id={`${formId}-date`}
+            name="incomeDate"
             type="date"
             className="filter-control"
             value={date}
@@ -110,10 +111,12 @@ export default function IncomeEntryForm({
           <label htmlFor={`${formId}-notes`}>{t.notesOptional}</label>
           <input
             id={`${formId}-notes`}
+            name="incomeNotes"
             className="filter-control"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder={t.optionalNotesPlaceholder}
+            autoComplete="off"
           />
         </div>
       </div>
@@ -127,20 +130,20 @@ export default function IncomeEntryForm({
             <div key={product.id} className="product-row-v2" style={{ padding: 'var(--spacing-sm) var(--spacing-md)' }}>
               <div className="product-cell-main">
                 <div className="product-icon-v2" style={{ width: 40, height: 40 }}>
-                  <MIcon name="inventory_2" size={20} />
+                  <span className="material-symbols-outlined" style={{ fontSize: 20 }} aria-hidden="true">inventory_2</span>
                 </div>
                 <div className="product-info-text">
                   <span className="product-name-v2">{product.name}</span>
-                  <span className="product-meta-v2">{formatCurrency(product.price, currency)} • <span className={status.class} style={{ background: 'transparent', padding: 0 }}>{status.label}</span></span>
+                  <span className="product-meta-v2">{formatCurrency(product.priceMinor, currency)} • <span className={status.class} style={{ background: 'transparent', padding: 0 }}>{status.label}</span></span>
                 </div>
               </div>
 
               <div className="qty-control-v2">
-                <button className="qty-btn" onClick={() => handleQuantityChange(product.id, -1)} disabled={qty === 0}>
+                <button type="button" className="qty-btn" onClick={() => handleQuantityChange(product.id, -1)} disabled={qty === 0} aria-label="Decrease quantity">
                   <MIcon name="remove" size={14} />
                 </button>
                 <span className="qty-val">{qty}</span>
-                <button className="qty-btn plus" onClick={() => handleQuantityChange(product.id, 1)}>
+                <button type="button" className="qty-btn plus" onClick={() => handleQuantityChange(product.id, 1)} aria-label="Increase quantity">
                   <MIcon name="add" size={14} />
                 </button>
               </div>

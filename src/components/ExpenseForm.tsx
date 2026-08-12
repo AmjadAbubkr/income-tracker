@@ -1,6 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { Expense } from '../types';
-import { getCurrency } from '../utils/currency';
+import { formatMoneyInput, getCurrency, parseMoneyInput } from '../utils/currency';
 import { useLanguage } from '../context/LanguageContext';
 
 interface ExpenseFormProps {
@@ -24,7 +24,7 @@ export default function ExpenseForm({ onSubmit, onCancel, currency, initialData 
     const { t } = useLanguage();
     const currencyInfo = getCurrency(currency);
     const [description, setDescription] = useState(initialData?.description || '');
-    const [amount, setAmount] = useState(initialData?.amount.toString() || '');
+    const [amount, setAmount] = useState(initialData ? formatMoneyInput(initialData.amountMinor, currency) : '');
     const [category, setCategory] = useState(initialData?.category || '');
     const [date, setDate] = useState(initialData?.date || new Date().toISOString().split('T')[0]);
     const [customCategory, setCustomCategory] = useState('');
@@ -38,8 +38,8 @@ export default function ExpenseForm({ onSubmit, onCancel, currency, initialData 
             return;
         }
 
-        const amountNum = parseFloat(amount);
-        if (isNaN(amountNum) || amountNum <= 0) {
+        const amountMinor = parseMoneyInput(amount, currency);
+        if (amountMinor === null || amountMinor <= 0) {
             alert(t.validAmount);
             return;
         }
@@ -53,7 +53,7 @@ export default function ExpenseForm({ onSubmit, onCancel, currency, initialData 
         try {
             await onSubmit({
                 description: description.trim(),
-                amount: amountNum,
+                amountMinor,
                 category: finalCategory,
                 date,
             });
@@ -79,6 +79,7 @@ export default function ExpenseForm({ onSubmit, onCancel, currency, initialData 
                 <label htmlFor="description">{t.description} *</label>
                 <input
                     id="description"
+                    name="expenseDescription"
                     type="text"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -93,6 +94,7 @@ export default function ExpenseForm({ onSubmit, onCancel, currency, initialData 
                     <span className="price-symbol">{currencyInfo.symbol}</span>
                     <input
                         id="amount"
+                        name="expenseAmount"
                         type="number"
                         step="0.01"
                         min="0"
@@ -110,6 +112,7 @@ export default function ExpenseForm({ onSubmit, onCancel, currency, initialData 
                 {!isCustomCategory ? (
                     <select
                         id="category"
+                        name="expenseCategory"
                         value={category}
                         onChange={(e) => {
                             if (e.target.value === 'custom') {
@@ -152,6 +155,7 @@ export default function ExpenseForm({ onSubmit, onCancel, currency, initialData 
                 <label htmlFor="date">{t.date} *</label>
                 <input
                     id="date"
+                    name="expenseDate"
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}

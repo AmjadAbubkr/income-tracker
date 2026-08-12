@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AnalyticsPage from '../src/components/AnalyticsPage';
 import ExpensesPage from '../src/components/ExpensesPage';
 import SalesPage from '../src/components/SalesPage';
@@ -80,7 +81,12 @@ describe('screen component contracts', () => {
   });
 
   it('renders sales with the product-form contract deferred until requested', () => {
-    render(<SalesPage currency="USD" />);
+    const queryClient = new QueryClient();
+    render(
+      <QueryClientProvider client={queryClient}>
+        <SalesPage currency="USD" />
+      </QueryClientProvider>,
+    );
     expect(screen.getByRole('heading', { name: 'Sales' })).toBeInTheDocument();
   });
 

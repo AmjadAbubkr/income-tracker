@@ -7,6 +7,7 @@ interface ExpenseState {
   fetch: () => Promise<void>;
   add: (expense: Omit<Expense, 'id'>) => Promise<void>;
   remove: (id: string) => Promise<void>;
+  clear: () => void;
 }
 
 export const useExpenseStore = create<ExpenseState>((set, get) => ({
@@ -30,8 +31,9 @@ export const useExpenseStore = create<ExpenseState>((set, get) => ({
 
   remove: async (id) => {
     const { storage } = await import('../utils/storage');
+    await storage.deleteExpense(id);
     const updated = get().expenses.filter((e) => e.id !== id);
-    await storage.saveExpenses(updated);
     set({ expenses: updated });
   },
+  clear: () => set({ expenses: [], isLoading: false }),
 }));

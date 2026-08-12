@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { storage } from '../utils/storage';
 
 export interface Category {
   id: string;
@@ -8,23 +8,21 @@ export interface Category {
 }
 
 export async function createCategory(data: { name: string }): Promise<Category> {
-  return apiClient.post<Category>('/api/categories', data);
+  const newCategory: Category = {
+    id: crypto.randomUUID(),
+    name: data.name,
+    createdAt: new Date().toISOString(),
+    userId: '', // This will be set by the database layer for the active user
+  };
+  await storage.addCategory(newCategory);
+  return newCategory;
 }
 
 export async function getCategories(): Promise<Category[]> {
-  return apiClient.get<Category[]>('/api/categories');
+  return storage.getCategories();
 }
 
 export async function deleteCategory(id: string): Promise<{ message: string }> {
-  const response = await fetch(`${import.meta.env.VITE_API_URL || '/api'}/categories/${id}`, {
-    method: 'DELETE',
-    credentials: 'include',
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Request failed' }));
-    throw new Error(error.error || `HTTP ${response.status}`);
-  }
-
-  return response.json();
+  await storage.deleteCategory(id);
+  return { message: 'Category deleted successfully' };
 }

@@ -47,18 +47,21 @@ export default function CategoryManager() {
       <form onSubmit={handleCreate} style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
         <input
           type="text"
+          name="categoryName"
+          autoComplete="off"
           value={newCategoryName}
           onChange={(e) => setNewCategoryName(e.target.value)}
-          placeholder={t.enterCategoryName || 'Enter category name'}
+          placeholder={t.enterCategoryName || 'Enter category name…'}
           style={{ flex: 1, padding: '0.5rem' }}
+          aria-label={t.enterCategoryName || 'Enter category name'}
         />
         <button type="submit" className="btn btn-primary" disabled={mutations.create.isPending}>
-          {mutations.create.isPending ? (t.adding || 'Adding...') : (t.addCategory || 'Add')}
+          {mutations.create.isPending ? (t.adding || 'Adding…') : (t.addCategory || 'Add')}
         </button>
       </form>
 
       {error && (
-        <div style={{ color: 'var(--error-color, #e53e3e)', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+        <div style={{ color: 'var(--error)', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
           {error}
         </div>
       )}
@@ -75,7 +78,7 @@ export default function CategoryManager() {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '0.5rem',
-                borderBottom: '1px solid var(--border-color, #e2e8f0)',
+                borderBottom: '1px solid var(--border-subtle)',
               }}
             >
               <span>{cat.name}</span>
@@ -84,6 +87,7 @@ export default function CategoryManager() {
                 className="btn btn-secondary"
                 style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
                 disabled={mutations.delete.isPending}
+                type="button"
               >
                 {t.delete}
               </button>

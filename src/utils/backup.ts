@@ -68,34 +68,14 @@ export const backupService = {
         throw new Error('Invalid backup file format');
       }
 
-      // Clear existing data and restore backup
-      // We save sequentially to avoid race conditions with DB connections if any
-      await storage.saveProducts(backup.data.products);
-      await storage.saveIncomeEntries(backup.data.incomeEntries);
-
-      if (backup.data.expenses) {
-        await storage.saveExpenses(backup.data.expenses);
-      } else {
-        await storage.saveExpenses([]);
-      }
-
-      if (backup.data.categories) {
-        await storage.saveCategories(backup.data.categories);
-      } else {
-        await storage.saveCategories([]);
-      }
-
-      if (backup.data.businessSubscriptions) {
-        await storage.saveBusinessSubscriptions(backup.data.businessSubscriptions);
-      } else {
-        await storage.saveBusinessSubscriptions([]);
-      }
-
-      if (backup.data.customerSubscriptions) {
-        await storage.saveCustomerSubscriptions(backup.data.customerSubscriptions);
-      } else {
-        await storage.saveCustomerSubscriptions([]);
-      }
+      await storage.restoreBackup({
+        products: backup.data.products,
+        incomeEntries: backup.data.incomeEntries,
+        expenses: backup.data.expenses || [],
+        categories: backup.data.categories || [],
+        businessSubscriptions: backup.data.businessSubscriptions || [],
+        customerSubscriptions: backup.data.customerSubscriptions || [],
+      });
 
                     resolve();
                 } catch (error) {

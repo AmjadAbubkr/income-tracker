@@ -1,22 +1,26 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../api/products';
 import type { Product } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 export function useProducts() {
+  const { user } = useAuth();
   return useQuery<Product[], Error>({
-    queryKey: ['products'],
+    queryKey: ['products', user?.id],
     queryFn: getProducts,
+    enabled: Boolean(user),
     staleTime: 30000,
   });
 }
 
 export function useProductMutations() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const create = useMutation<Product, Error, Omit<Product, 'id' | 'createdAt'>>({
     mutationFn: createProduct,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['products', user?.id] });
     },
   });
 
@@ -27,14 +31,14 @@ export function useProductMutations() {
   >({
     mutationFn: ({ id, data }) => updateProduct(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['products', user?.id] });
     },
   });
 
   const remove = useMutation<{ message: string }, Error, string>({
     mutationFn: deleteProduct,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['products', user?.id] });
     },
   });
 

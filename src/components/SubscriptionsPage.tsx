@@ -161,6 +161,7 @@ export default function SubscriptionsPage({ currency }: SubscriptionsPageProps) 
 
             {showBusinessForm && (
                 <BusinessSubscriptionForm
+                    currency={currency}
                     onClose={() => { setShowBusinessForm(false); setEditingBusiness(null); }}
                     onSubmit={async (data) => {
                         if (editingBusiness) {
@@ -175,6 +176,7 @@ export default function SubscriptionsPage({ currency }: SubscriptionsPageProps) 
             )}
             {showCustomerForm && (
                 <CustomerSubscriptionForm
+                    currency={currency}
                     onClose={() => { setShowCustomerForm(false); setEditingCustomer(null); }}
                     onSubmit={async (data) => {
                         if (editingCustomer) {

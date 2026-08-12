@@ -1,5 +1,5 @@
 import { Product, IncomeEntry, Expense, BusinessSubscription, CustomerSubscription, User, Category } from '../types';
-import { database } from './database';
+import { database, BackupCollections, CheckoutItem, CheckoutResult, SubscriptionProcessingResult } from './database';
 
 export const storage = {
   // Auth & Context
@@ -33,6 +33,10 @@ export const storage = {
 
   async addProduct(product: Product): Promise<void> {
     return database.addProduct(product);
+  },
+
+  async updateProduct(id: string, changes: Partial<Omit<Product, 'id' | 'userId'>>): Promise<Product> {
+    return database.updateProduct(id, changes);
   },
 
   async deleteProduct(id: string): Promise<void> {
@@ -82,6 +86,17 @@ export const storage = {
     return database.saveBusinessSubscriptions(subs);
   },
 
+  async addBusinessSubscription(sub: BusinessSubscription): Promise<void> {
+    return database.addBusinessSubscription(sub);
+  },
+
+  async updateBusinessSubscription(
+    id: string,
+    changes: Partial<Omit<BusinessSubscription, 'id' | 'userId'>>
+  ): Promise<BusinessSubscription> {
+    return database.updateBusinessSubscription(id, changes);
+  },
+
   async deleteBusinessSubscription(id: string): Promise<void> {
     return database.deleteBusinessSubscription(id);
   },
@@ -95,8 +110,31 @@ export const storage = {
     return database.saveCustomerSubscriptions(subs);
   },
 
+  async addCustomerSubscription(sub: CustomerSubscription): Promise<void> {
+    return database.addCustomerSubscription(sub);
+  },
+
+  async updateCustomerSubscription(
+    id: string,
+    changes: Partial<Omit<CustomerSubscription, 'id' | 'userId'>>
+  ): Promise<CustomerSubscription> {
+    return database.updateCustomerSubscription(id, changes);
+  },
+
   async deleteCustomerSubscription(id: string): Promise<void> {
     return database.deleteCustomerSubscription(id);
+  },
+
+  async checkout(items: CheckoutItem[], date: string, notes?: string): Promise<CheckoutResult> {
+    return database.checkout(items, date, notes);
+  },
+
+  async processDueSubscriptions(asOfDate?: string): Promise<SubscriptionProcessingResult> {
+    return database.processDueSubscriptions(asOfDate);
+  },
+
+  async restoreBackup(data: BackupCollections): Promise<void> {
+    return database.restoreBackup(data);
   },
 
   // Categories

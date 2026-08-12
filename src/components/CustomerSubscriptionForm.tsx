@@ -6,10 +6,11 @@ import { formatMoneyInput, parseMoneyInput } from '../utils/currency';
 interface CustomerSubscriptionFormProps {
     onSubmit: (sub: Omit<CustomerSubscription, 'id'>) => Promise<void>;
     onClose: () => void;
+    currency: string;
     initialData?: CustomerSubscription;
 }
 
-export default function CustomerSubscriptionForm({ onSubmit, onClose, initialData }: CustomerSubscriptionFormProps) {
+export default function CustomerSubscriptionForm({ onSubmit, onClose, currency, initialData }: CustomerSubscriptionFormProps) {
     const { t } = useLanguage();
     const [formData, setFormData] = useState<Omit<CustomerSubscription, 'id'>>({
         customerName: initialData?.customerName || '',
@@ -21,11 +22,11 @@ export default function CustomerSubscriptionForm({ onSubmit, onClose, initialDat
         status: initialData?.status || 'active',
         notes: initialData?.notes || '',
     });
-    const [amount, setAmount] = useState(initialData ? formatMoneyInput(initialData.amountMinor) : '');
+    const [amount, setAmount] = useState(initialData ? formatMoneyInput(initialData.amountMinor, currency) : '');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const amountMinor = parseMoneyInput(amount);
+        const amountMinor = parseMoneyInput(amount, currency);
         if (!formData.customerName || !formData.serviceName || amountMinor === null || amountMinor <= 0) {
             alert(t.fillRequiredFields);
             return;

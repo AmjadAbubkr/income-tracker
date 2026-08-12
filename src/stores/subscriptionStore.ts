@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { BusinessSubscription, CustomerSubscription } from '../types';
-import { calculateNextBillingDate } from '../utils/dateUtils';
 import type { IncomeEntry, Expense } from '../types';
 
 interface SubscriptionState {
@@ -24,6 +23,7 @@ interface SubscriptionState {
     updatedBusSubs: BusinessSubscription[];
     updatedCustSubs: CustomerSubscription[];
   }>;
+  clear: () => void;
 }
 
 export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
@@ -44,103 +44,46 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
   addBusiness: async (sub) => {
     const { storage } = await import('../utils/storage');
     const newSub: BusinessSubscription = { ...sub, id: crypto.randomUUID() };
-    const updated = [...get().business, newSub];
-    await storage.saveBusinessSubscriptions(updated);
-    set({ business: updated });
+    await storage.addBusinessSubscription(newSub);
+    set({ business: [...get().business, newSub] });
   },
 
   updateBusiness: async (id, sub) => {
     const { storage } = await import('../utils/storage');
-    const updated = get().business.map((s) => (s.id === id ? { ...sub, id } : s));
-    await storage.saveBusinessSubscriptions(updated);
-    set({ business: updated });
+    const updatedSub = await storage.updateBusinessSubscription(id, sub);
+    set({ business: get().business.map((current) => current.id === id ? updatedSub : current) });
   },
 
   removeBusiness: async (id) => {
     const { storage } = await import('../utils/storage');
-    const updated = get().business.filter((s) => s.id !== id);
-    await storage.saveBusinessSubscriptions(updated);
-    set({ business: updated });
+    await storage.deleteBusinessSubscription(id);
+    set({ business: get().business.filter((s) => s.id !== id) });
   },
 
   addCustomer: async (sub) => {
     const { storage } = await import('../utils/storage');
     const newSub: CustomerSubscription = { ...sub, id: crypto.randomUUID() };
-    const updated = [...get().customer, newSub];
-    await storage.saveCustomerSubscriptions(updated);
-    set({ customer: updated });
+    await storage.addCustomerSubscription(newSub);
+    set({ customer: [...get().customer, newSub] });
   },
 
   updateCustomer: async (id, sub) => {
     const { storage } = await import('../utils/storage');
-    const updated = get().customer.map((s) => (s.id === id ? { ...sub, id } : s));
-    await storage.saveCustomerSubscriptions(updated);
-    set({ customer: updated });
+    const updatedSub = await storage.updateCustomerSubscription(id, sub);
+    set({ customer: get().customer.map((current) => current.id === id ? updatedSub : current) });
   },
 
   removeCustomer: async (id) => {
     const { storage } = await import('../utils/storage');
-    const updated = get().customer.filter((s) => s.id !== id);
-    await storage.saveCustomerSubscriptions(updated);
-    set({ customer: updated });
+    await storage.deleteCustomerSubscription(id);
+    set({ customer: get().customer.filter((s) => s.id !== id) });
   },
 
   processAutoRecording: async () => {
-    const today = new Date().toISOString().split('T')[0];
-    const newExpenses: Expense[] = [];
-    const newIncome: IncomeEntry[] = [];
-    let hasChanges = false;
-
-    const updatedBusSubs = get().business.map((sub) => {
-      if (sub.status !== 'active' || sub.nextBillingDate === '' || sub.nextBillingDate > today) {
-        return sub;
-      }
-      let currentSub = { ...sub };
-      let changed = false;
-      while (currentSub.nextBillingDate <= today) {
-        newExpenses.push({
-          id: crypto.randomUUID(),
-          amountMinor: currentSub.amountMinor,
-          category: currentSub.category || 'Service',
-          description: `Recurring: ${currentSub.name}`,
-          date: currentSub.nextBillingDate,
-        } as Expense);
-        currentSub.nextBillingDate = calculateNextBillingDate(currentSub.nextBillingDate, currentSub.billingCycle);
-        changed = true;
-      }
-      if (changed) hasChanges = true;
-      return currentSub;
-    });
-
-    const updatedCustSubs = get().customer.map((sub) => {
-      if (sub.status !== 'active' || sub.nextBillingDate === '' || sub.nextBillingDate > today) {
-        return sub;
-      }
-      let currentSub = { ...sub };
-      let changed = false;
-      while (currentSub.nextBillingDate <= today) {
-        newIncome.push({
-          id: crypto.randomUUID(),
-          productId: 'subscription',
-          quantity: 1,
-          amountMinor: currentSub.amountMinor,
-          date: currentSub.nextBillingDate,
-          notes: `Recurring: ${currentSub.serviceName} - ${currentSub.customerName}`,
-        } as IncomeEntry);
-        currentSub.nextBillingDate = calculateNextBillingDate(currentSub.nextBillingDate, currentSub.billingCycle);
-        changed = true;
-      }
-      if (changed) hasChanges = true;
-      return currentSub;
-    });
-
-    if (hasChanges) {
-      const { storage } = await import('../utils/storage');
-      await storage.saveBusinessSubscriptions(updatedBusSubs);
-      await storage.saveCustomerSubscriptions(updatedCustSubs);
-      set({ business: updatedBusSubs, customer: updatedCustSubs });
-    }
-
-    return { newExpenses, newIncome, updatedBusSubs, updatedCustSubs };
+    const { storage } = await import('../utils/storage');
+    const result = await storage.processDueSubscriptions();
+    set({ business: result.updatedBusSubs, customer: result.updatedCustSubs });
+    return result;
   },
+  clear: () => set({ business: [], customer: [], isLoading: false }),
 }));

@@ -1,7 +1,13 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { formatCurrency, formatMoneyInput, parseMoneyInput } from '../src/utils/currency';
 
 const DB_NAME = 'IncomeTrackerDB';
+let activeDatabase: { close: () => void } | undefined;
+
+afterEach(() => {
+  activeDatabase?.close();
+  activeDatabase = undefined;
+});
 
 const deleteDatabase = () => new Promise<void>((resolve, reject) => {
   const request = indexedDB.deleteDatabase(DB_NAME);
@@ -55,6 +61,7 @@ describe('exact money conversion', () => {
     vi.resetModules();
     const { Database } = await import('../src/utils/database');
     const database = new Database();
+    activeDatabase = database;
     await database.init();
     database.setUserId('user-1');
 

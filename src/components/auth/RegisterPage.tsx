@@ -59,9 +59,12 @@ export default function RegisterPage({ onSwitchMode }: RegisterPageProps) {
                 )}
 
                 <div className="form-group">
-                    <label style={{ display: 'block', marginBottom: '6px', fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>{t.fullName}</label>
+                    <label htmlFor="register-name" style={{ display: 'block', marginBottom: '6px', fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>{t.fullName}</label>
                     <input
+                        id="register-name"
                         type="text"
+                        name="name"
+                        autoComplete="name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         className="filter-control"
@@ -71,9 +74,13 @@ export default function RegisterPage({ onSwitchMode }: RegisterPageProps) {
                 </div>
 
                 <div className="form-group">
-                    <label style={{ display: 'block', marginBottom: '6px', fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>{t.emailAddress}</label>
+                    <label htmlFor="register-email" style={{ display: 'block', marginBottom: '6px', fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>{t.emailAddress}</label>
                     <input
+                        id="register-email"
                         type="email"
+                        name="email"
+                        autoComplete="email"
+                        spellCheck={false}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="filter-control"
@@ -83,9 +90,12 @@ export default function RegisterPage({ onSwitchMode }: RegisterPageProps) {
                 </div>
 
                 <div className="form-group">
-                    <label style={{ display: 'block', marginBottom: '6px', fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>{t.password}</label>
+                    <label htmlFor="register-password" style={{ display: 'block', marginBottom: '6px', fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>{t.password}</label>
                     <input
+                        id="register-password"
                         type="password"
+                        name="password"
+                        autoComplete="new-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="filter-control"
@@ -95,9 +105,12 @@ export default function RegisterPage({ onSwitchMode }: RegisterPageProps) {
                 </div>
 
                 <div className="form-group">
-                    <label style={{ display: 'block', marginBottom: '6px', fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>{t.confirmPassword}</label>
+                    <label htmlFor="register-confirm-password" style={{ display: 'block', marginBottom: '6px', fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>{t.confirmPassword}</label>
                     <input
+                        id="register-confirm-password"
                         type="password"
+                        name="confirmPassword"
+                        autoComplete="new-password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         className="filter-control"
@@ -116,7 +129,7 @@ export default function RegisterPage({ onSwitchMode }: RegisterPageProps) {
                 </button>
 
                 <p style={{ textAlign: 'center', fontSize: 'var(--font-sm)', color: 'var(--text-muted)', marginTop: 'var(--spacing-md)' }}>
-                    {t.alreadyHaveAccount} <button type="button" onClick={onSwitchMode} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontWeight: '600', textDecoration: 'none' }}>{t.signIn}</button>
+                    {t.alreadyHaveAccount} <button type="button" onClick={onSwitchMode} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontWeight: '600', padding: 0 }}>{t.signIn}</button>
                 </p>
             </form>
         </AuthLayout>

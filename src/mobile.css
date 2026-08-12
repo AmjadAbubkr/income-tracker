@@ -1,0 +1,336 @@
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .app {
+        flex-direction: column;
+    }
+
+    /* Turn Sidebar into Bottom Navigation */
+    .sidebar,
+    .sidebar.collapsed {
+        --mobile-bottom-nav-height: 80px;
+        width: 100%;
+        height: calc(var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom));
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        left: 0;
+
+        flex-direction: row;
+        padding: 8px 12px;
+        z-index: 1000;
+        border-right: none !important;
+        border-left: none !important;
+        border-top: 1px solid var(--border) !important;
+        justify-content: center;
+        background: var(--bg-card-solid);
+        border-bottom: none;
+    }
+
+    .more-sheet {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 500;
+
+        background: var(--bg-card-solid);
+        border-top: 1px solid var(--border);
+        border-left: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+        border-radius: 18px 18px 0 0;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.35);
+        transform: translateY(calc(100% + env(safe-area-inset-bottom)));
+        transition: transform 0.22s ease;
+        min-height: 40vh;
+        max-height: 85vh;
+        overflow: hidden;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .more-sheet.open {
+        z-index: 500;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .more-sheet-handle {
+        width: 48px;
+        height: 4px;
+        border-radius: 999px;
+        background: var(--border);
+        margin: 10px auto 6px;
+    }
+
+    .more-sheet-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 14px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .more-sheet-title {
+        color: var(--text);
+        font-weight: 600;
+    }
+
+    .more-sheet-close {
+        background: transparent;
+        color: var(--text-muted);
+        border: none;
+        font-size: 1.4rem;
+        cursor: pointer;
+    }
+
+    .more-sheet-body {
+        padding: 10px 10px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        overflow-y: auto;
+        /* Remove explicit max-height, let it fill the flex container */
+        flex: 1;
+        padding-bottom: calc(14px + var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom));
+    }
+
+    .more-sheet-body .sidebar-item {
+        padding: 10px 12px;
+        flex-shrink: 0;
+    }
+
+    .sidebar-header {
+        display: none;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+        gap: 4px;
+        padding-bottom: env(safe-area-inset-bottom);
+        position: relative;
+        z-index: 10;
+        /* Higher than more-sheet */
+    }
+
+    .sidebar-nav .sidebar-item {
+        flex-direction: column;
+        padding: 6px;
+        gap: 4px;
+        flex: 1;
+        justify-content: center;
+        border-radius: 8px;
+    }
+
+    /* Force show labels on mobile even if collapsed state is true in JS */
+    .sidebar-nav .sidebar-label {
+        display: block;
+        font-size: 10px;
+        margin: 0;
+    }
+
+    .sidebar-nav .sidebar-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Main Content Adjustments */
+    .app-main {
+        margin-bottom: 80px;
+        /* Space for bottom nav */
+        width: 100%;
+        margin-left: 0 !important;
+    }
+
+    .main-content {
+        padding: var(--spacing-md) 12px;
+    }
+
+    /* Header Adjustments */
+    .app-header {
+        padding: 16px 20px;
+        background: transparent;
+        border-bottom: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        z-index: 100;
+    }
+
+    .header-left-mobile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .avatar-mini-circle {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: #fef2f2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #f97316;
+        font-weight: 700;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .header-greeting {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .greeting-text {
+        font-size: 11px;
+        color: var(--text-muted);
+    }
+
+    .user-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .desktop-only {
+        display: none !important;
+    }
+
+    .mobile-only-dropdown {
+        top: 70px;
+        left: 20px;
+        right: 20px;
+        width: auto;
+    }
+
+    /* Modal Overlay centering and full width on mobile */
+    .modal-overlay {
+        padding: 8px !important;
+    }
+
+    .modal-content {
+        border-radius: var(--radius-lg) !important;
+    }
+
+    /* Dashboard Mobile Redesign - Removed horizontal padding to fit 100% */
+    .mobile-redesign {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        padding: 0 0 100px;
+    }
+
+    /* Handled by global styles in App.css */
+
+    /* Bottom Nav Enhancements */
+    .sidebar {
+        background: var(--bg-card) !important;
+        backdrop-filter: blur(20px);
+        border-top: 1px solid var(--border) !important;
+        height: 90px;
+    }
+
+    .mobile-plus-btn {
+        width: 54px;
+        height: 54px;
+        min-width: 54px;
+        min-height: 54px;
+        background: var(--accent);
+        border-radius: 50% !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        box-shadow: var(--shadow);
+        margin-top: -30px;
+        border: 2px solid var(--border);
+        flex-shrink: 0 !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar-nav .sidebar-item {
+        color: var(--text-muted);
+        align-items: center;
+        border-left: none !important;
+    }
+
+    .sidebar-nav .sidebar-item.active {
+        color: var(--accent);
+        border-left: none !important;
+        background: transparent !important;
+    }
+
+    .sidebar-nav .sidebar-item.plus-item {
+        flex: 1.5;
+    }
+
+    .sidebar-nav .sidebar-item.plus-item.active {
+        color: rgba(255, 255, 255, 0.3);
+        background: transparent;
+        border-left: none !important;
+    }
+
+    .sidebar-nav .sidebar-item.plus-item:hover {
+        background: transparent;
+        border-left: none !important;
+    }
+
+    .sidebar-nav .sidebar-item.plus-item:hover .mobile-plus-btn {
+        box-shadow: 0 0 24px rgba(59, 130, 246, 0.8), 0 8px 16px rgba(37, 99, 235, 0.4);
+        background: #3b82f6;
+        transform: scale(1.05);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .sidebar-nav .sidebar-item.plus-item.active .mobile-plus-btn {
+        box-shadow: 0 0 24px rgba(59, 130, 246, 0.8), 0 8px 16px rgba(37, 99, 235, 0.4);
+        background: #3b82f6;
+        transform: scale(1.05);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Sales Page Product List Mobile Stack & Center */
+    .product-table-header-v2 {
+        display: none !important;
+    }
+
+    .product-row-v2 {
+        grid-template-columns: 1fr !important;
+        gap: var(--spacing-md) !important;
+        text-align: center !important;
+        justify-items: center !important;
+        width: 100% !important;
+    }
+
+    .product-cell-main {
+        flex-direction: column !important;
+        text-align: center !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+    }
+
+    .product-icon-v2 {
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .product-info-text {
+        align-items: center !important;
+    }
+
+    .product-price-v2 {
+        text-align: center !important;
+        width: 100% !important;
+        font-weight: 600;
+    }
+
+    .qty-control-v2 {
+        justify-content: center !important;
+        width: 100% !important;
+    }
+}

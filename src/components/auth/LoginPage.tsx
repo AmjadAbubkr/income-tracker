@@ -55,9 +55,13 @@ export default function LoginPage({ onSwitchMode }: LoginPageProps) {
                 )}
 
                 <div className="form-group">
-                    <label style={{ display: 'block', marginBottom: '6px', fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>{t.emailAddress}</label>
+                    <label htmlFor="login-email" style={{ display: 'block', marginBottom: '6px', fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>{t.emailAddress}</label>
                     <input
+                        id="login-email"
                         type="email"
+                        name="email"
+                        autoComplete="email"
+                        spellCheck={false}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="filter-control"
@@ -68,11 +72,13 @@ export default function LoginPage({ onSwitchMode }: LoginPageProps) {
 
                 <div className="form-group">
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                        <label style={{ fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>{t.password}</label>
-                        <a href="#" style={{ fontSize: 'var(--font-xs)', color: 'var(--accent)', textDecoration: 'none' }}>Forgot password?</a>
+                        <label htmlFor="login-password" style={{ fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>{t.password}</label>
                     </div>
                     <input
+                        id="login-password"
                         type="password"
+                        name="password"
+                        autoComplete="current-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="filter-control"
@@ -91,7 +97,7 @@ export default function LoginPage({ onSwitchMode }: LoginPageProps) {
                 </button>
 
                 <p style={{ textAlign: 'center', fontSize: 'var(--font-sm)', color: 'var(--text-muted)', marginTop: 'var(--spacing-md)' }}>
-                    {t.dontHaveAccount} <button type="button" onClick={onSwitchMode} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontWeight: '600', textDecoration: 'none' }}>{t.createAccount}</button>
+                    {t.dontHaveAccount} <button type="button" onClick={onSwitchMode} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontWeight: '600', padding: 0 }}>{t.createAccount}</button>
                 </p>
             </form>
         </AuthLayout>

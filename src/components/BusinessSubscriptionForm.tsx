@@ -6,10 +6,11 @@ import { formatMoneyInput, parseMoneyInput } from '../utils/currency';
 interface BusinessSubscriptionFormProps {
     onSubmit: (sub: Omit<BusinessSubscription, 'id'>) => Promise<void>;
     onClose: () => void;
+    currency: string;
     initialData?: BusinessSubscription;
 }
 
-export default function BusinessSubscriptionForm({ onSubmit, onClose, initialData }: BusinessSubscriptionFormProps) {
+export default function BusinessSubscriptionForm({ onSubmit, onClose, currency, initialData }: BusinessSubscriptionFormProps) {
     const { t } = useLanguage();
     const [formData, setFormData] = useState<Omit<BusinessSubscription, 'id'>>({
         name: initialData?.name || '',
@@ -19,11 +20,11 @@ export default function BusinessSubscriptionForm({ onSubmit, onClose, initialDat
         nextBillingDate: initialData?.nextBillingDate || new Date().toISOString().split('T')[0],
         status: initialData?.status || 'active',
     });
-    const [amount, setAmount] = useState(initialData ? formatMoneyInput(initialData.amountMinor) : '');
+    const [amount, setAmount] = useState(initialData ? formatMoneyInput(initialData.amountMinor, currency) : '');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const amountMinor = parseMoneyInput(amount);
+        const amountMinor = parseMoneyInput(amount, currency);
         if (!formData.name || amountMinor === null || amountMinor <= 0) {
             alert(t.fillRequiredFields);
             return;

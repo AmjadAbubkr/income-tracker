@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { Product, IncomeEntry } from '../types';
+import { useQueryClient } from '@tanstack/react-query';
+import { Product } from '../types';
 import { useProducts } from '../hooks/useProducts';
 import { useIncomeStore } from '../stores/incomeStore';
 import ProductForm from './ProductForm';
@@ -32,6 +33,7 @@ export default function SalesPage({ currency }: SalesPageProps) {
    */
   const { data: products = [] } = useProducts();
   const incomeStore = useIncomeStore();
+  const queryClient = useQueryClient();
 
   /* ── Local State ── */
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -40,6 +42,7 @@ export default function SalesPage({ currency }: SalesPageProps) {
   const [categoryFilter, setCategoryFilter] = useState('All Items');
   const [notes, setNotes] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   /* ── Derived ── */
   const categories = useMemo(() => {
@@ -77,18 +80,23 @@ export default function SalesPage({ currency }: SalesPageProps) {
   const cartTotalMinor = cart.reduce((sum, item) => sum + item.priceMinor * item.quantity, 0);
 
   const handleCompleteSale = async () => {
-    for (const item of cart) {
-      await incomeStore.add({
-        productId: item.productId,
-        quantity: item.quantity,
-        amountMinor: item.priceMinor * item.quantity,
-        date: saleDate,
-        notes: notes || undefined,
-      } as Omit<IncomeEntry, 'id'>);
+    if (cart.length === 0 || isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await incomeStore.checkout(
+        cart.map((item) => ({ productId: item.productId, quantity: item.quantity })),
+        saleDate,
+        notes,
+      );
+      await queryClient.invalidateQueries({ queryKey: ['products'] });
+      setCart([]);
+      setNotes('');
+      setShowIncomeModal(false);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to complete sale');
+    } finally {
+      setIsSubmitting(false);
     }
-    setCart([]);
-    setNotes('');
-    setShowIncomeModal(false);
   };
 
   return (
@@ -157,7 +165,7 @@ export default function SalesPage({ currency }: SalesPageProps) {
       )}
       {showIncomeModal && (
         <div className="form-actions">
-          <button type="button" className="btn btn-primary" onClick={handleCompleteSale}>
+          <button type="button" className="btn btn-primary" onClick={handleCompleteSale} disabled={isSubmitting}>
             {t.confirm}
           </button>
           <button type="button" className="btn btn-secondary" onClick={() => setShowIncomeModal(false)}>

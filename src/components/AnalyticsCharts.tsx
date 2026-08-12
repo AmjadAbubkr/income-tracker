@@ -41,6 +41,14 @@ interface CustomTooltipProps {
   label?: string;
 }
 
+function ChartEmptyState({ message }: { message: string }) {
+  return (
+    <div className="chart-empty-state" role="status">
+      {message}
+    </div>
+  );
+}
+
 export default function AnalyticsCharts({ incomeEntries, expenses, products, currency, viewMode }: AnalyticsChartsProps) {
   const { t } = useLanguage();
   const chartData = useMemo(() => {
@@ -94,22 +102,26 @@ export default function AnalyticsCharts({ incomeEntries, expenses, products, cur
       <div className="chart-section">
         <h3>{t.revenueVsExpenses}</h3>
         <div className="chart-wrapper">
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={chartData.timeSeriesData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="analyticsRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="date" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => formatCurrency(value, currency)} />
-              <CartesianGrid strokeDasharray="3 3" opacity={0.1} vertical={false} />
-              <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="revenue" stroke="var(--accent)" fillOpacity={1} fill="url(#analyticsRevenue)" />
-              <Area type="monotone" dataKey="expenses" stroke="var(--error)" fill="none" />
-            </AreaChart>
-          </ResponsiveContainer>
+          {chartData.timeSeriesData.length === 0 ? (
+            <ChartEmptyState message={t.noDataForPeriod} />
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={chartData.timeSeriesData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="analyticsRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="date" stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis stroke="var(--text-muted)" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => formatCurrency(value, currency)} />
+                <CartesianGrid strokeDasharray="3 3" opacity={0.1} vertical={false} />
+                <Tooltip content={<CustomTooltip />} />
+                <Area type="monotone" dataKey="revenue" stroke="var(--accent)" fillOpacity={1} fill="url(#analyticsRevenue)" />
+                <Area type="monotone" dataKey="expenses" stroke="var(--error)" fill="none" />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
 
@@ -117,31 +129,39 @@ export default function AnalyticsCharts({ incomeEntries, expenses, products, cur
         <div className="chart-section half-width">
           <h3>{t.topProducts}</h3>
           <div className="chart-wrapper">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={chartData.productData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                <XAxis type="number" hide />
-                <YAxis dataKey="name" type="category" width={80} stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} />
-                <Tooltip formatter={(value: number) => formatCurrency(value, currency)} />
-                <Bar dataKey="revenue" fill="var(--accent)" radius={[0, 4, 4, 0]}>
-                  {chartData.productData.map((item) => <Cell key={item.name} fill={COLORS[chartData.productData.indexOf(item) % COLORS.length]} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            {chartData.productData.length === 0 ? (
+              <ChartEmptyState message={t.noDataForPeriod} />
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={chartData.productData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <XAxis type="number" hide />
+                  <YAxis dataKey="name" type="category" width={80} stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} />
+                  <Tooltip formatter={(value: number) => formatCurrency(value, currency)} />
+                  <Bar dataKey="revenue" fill="var(--accent)" radius={[0, 4, 4, 0]}>
+                    {chartData.productData.map((item) => <Cell key={item.name} fill={COLORS[chartData.productData.indexOf(item) % COLORS.length]} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 
         <div className="chart-section half-width">
           <h3>{t.revenueByCategory}</h3>
           <div className="chart-wrapper">
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie data={chartData.salesData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
-                  {chartData.salesData.map((item, index) => <Cell key={item.name} fill={COLORS[index % COLORS.length]} />)}
-                </Pie>
-                <Tooltip />
-                <Legend verticalAlign="bottom" height={36} iconType="circle" />
-              </PieChart>
-            </ResponsiveContainer>
+            {chartData.salesData.length === 0 ? (
+              <ChartEmptyState message={t.noDataForPeriod} />
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie data={chartData.salesData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                    {chartData.salesData.map((item, index) => <Cell key={item.name} fill={COLORS[index % COLORS.length]} />)}
+                  </Pie>
+                  <Tooltip />
+                  <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
       </div>

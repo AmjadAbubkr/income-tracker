@@ -30,7 +30,7 @@ The current task is to complete the decoupling of any remaining server endpoints
   TypeScript baseline, protect local-profile isolation, use exact money values,
   and make checkout, subscription processing, and backup restore safe and
   atomic. Add regression coverage for those critical paths.
-- [ ] **Phase 10: Complete Remaining v1 Workflows** - Finish sales and expense
+- [x] **Phase 10: Complete Remaining v1 Workflows** - Finish sales and expense (completed 2026-08-12)
   management, dashboard/reporting requirements, notifications, profile editing,
   and complete EN/FR/AR UI coverage.
 

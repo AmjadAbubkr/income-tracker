@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type FormEvent } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Product } from '../types';
+import { IncomeEntry, Product } from '../types';
 import { useProducts } from '../hooks/useProducts';
 import { useIncomeStore } from '../stores/incomeStore';
 import ProductForm from './ProductForm';
@@ -43,6 +43,9 @@ export default function SalesPage({ currency }: SalesPageProps) {
   const [notes, setNotes] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [historyDate, setHistoryDate] = useState('');
+  const [historyProductId, setHistoryProductId] = useState('');
+  const [editingSale, setEditingSale] = useState<IncomeEntry | null>(null);
 
   /* ── Derived ── */
   const categories = useMemo(() => {
@@ -79,6 +82,13 @@ export default function SalesPage({ currency }: SalesPageProps) {
 
   const cartTotalMinor = cart.reduce((sum, item) => sum + item.priceMinor * item.quantity, 0);
 
+  const filteredHistory = useMemo(() => {
+    return [...incomeStore.entries]
+      .filter((entry) => !historyDate || entry.date === historyDate)
+      .filter((entry) => !historyProductId || entry.productId === historyProductId)
+      .sort((a, b) => b.date.localeCompare(a.date));
+  }, [historyDate, historyProductId, incomeStore.entries]);
+
   const handleCompleteSale = async () => {
     if (cart.length === 0 || isSubmitting) return;
     setIsSubmitting(true);
@@ -96,6 +106,47 @@ export default function SalesPage({ currency }: SalesPageProps) {
       alert(error instanceof Error ? error.message : 'Failed to complete sale');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleUpdateSale = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!editingSale) return;
+
+    const formData = new FormData(event.currentTarget);
+    const productId = String(formData.get('productId') || '');
+    const quantity = Number(formData.get('quantity'));
+    const date = String(formData.get('date') || '');
+    const notesValue = String(formData.get('notes') || '').trim();
+    const product = products.find((item) => item.id === productId);
+
+    if (!product || !Number.isSafeInteger(quantity) || quantity <= 0 || !date) {
+      alert(t.fillRequiredFields);
+      return;
+    }
+
+    try {
+      await incomeStore.update(editingSale.id, {
+        productId,
+        quantity,
+        amountMinor: product.priceMinor * quantity,
+        date,
+        notes: notesValue || undefined,
+      });
+      await queryClient.invalidateQueries({ queryKey: ['products'] });
+      setEditingSale(null);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : t.failedToUpdateSale);
+    }
+  };
+
+  const handleDeleteSale = async (entry: IncomeEntry) => {
+    if (!window.confirm(t.confirmDeleteEntry)) return;
+    try {
+      await incomeStore.remove(entry.id);
+      await queryClient.invalidateQueries({ queryKey: ['products'] });
+    } catch (error) {
+      alert(error instanceof Error ? error.message : t.failedToDeleteSale);
     }
   };
 
@@ -171,6 +222,92 @@ export default function SalesPage({ currency }: SalesPageProps) {
           <button type="button" className="btn btn-secondary" onClick={() => setShowIncomeModal(false)}>
             {t.cancel}
           </button>
+        </div>
+      )}
+
+      <section className="sales-history" aria-labelledby="sales-history-title">
+        <div className="page-header">
+          <h2 id="sales-history-title">{t.salesHistory}</h2>
+        </div>
+        <div className="history-filters">
+          <label>
+            {t.date}
+            <input
+              type="date"
+              value={historyDate}
+              onChange={(event) => setHistoryDate(event.target.value)}
+            />
+          </label>
+          <label>
+            {t.product}
+            <select value={historyProductId} onChange={(event) => setHistoryProductId(event.target.value)}>
+              <option value="">{t.allProducts}</option>
+              {products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
+            </select>
+          </label>
+        </div>
+
+        {filteredHistory.length === 0 ? (
+          <p className="empty-state-card">{t.noSalesHistory}</p>
+        ) : (
+          <div className="history-list">
+            {filteredHistory.map((entry) => {
+              const product = products.find((item) => item.id === entry.productId);
+              return (
+                <div key={entry.id} className="history-item">
+                  <div>
+                    <strong>{product?.name || t.unknown}</strong>
+                    <span>{entry.date} · {t.quantity}: {entry.quantity}</span>
+                    {entry.notes && <span>{entry.notes}</span>}
+                  </div>
+                  <div className="history-actions">
+                    <strong>{formatCurrency(entry.amountMinor, currency)}</strong>
+                    {product && (
+                      <>
+                        <button type="button" onClick={() => setEditingSale(entry)}>{t.edit}</button>
+                        <button type="button" onClick={() => handleDeleteSale(entry)}>{t.delete}</button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      {editingSale && (
+        <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="edit-sale-title">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 id="edit-sale-title">{t.editSale}</h2>
+              <button type="button" className="modal-close" onClick={() => setEditingSale(null)} title={t.close}>×</button>
+            </div>
+            <form className="modal-body" onSubmit={handleUpdateSale}>
+              <label className="form-group">
+                {t.product}
+                <select name="productId" defaultValue={editingSale.productId} required>
+                  {products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
+                </select>
+              </label>
+              <label className="form-group">
+                {t.quantity}
+                <input name="quantity" type="number" min="1" step="1" defaultValue={editingSale.quantity} required />
+              </label>
+              <label className="form-group">
+                {t.date}
+                <input name="date" type="date" defaultValue={editingSale.date} required />
+              </label>
+              <label className="form-group">
+                {t.notes}
+                <textarea name="notes" defaultValue={editingSale.notes || ''} />
+              </label>
+              <div className="form-actions">
+                <button type="submit" className="btn btn-primary">{t.saveChanges}</button>
+                <button type="button" className="btn btn-secondary" onClick={() => setEditingSale(null)}>{t.cancel}</button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

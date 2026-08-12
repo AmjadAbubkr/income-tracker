@@ -249,6 +249,16 @@ const en = {
   optionalNotes: 'Optional notes',
   subtotal: 'Subtotal',
   completeSale: 'Complete Sale',
+  salesHistory: 'Sales History',
+  product: 'Product',
+  allProducts: 'All Products',
+  noSalesHistory: 'No sales found for these filters.',
+  editSale: 'Edit Sale',
+  failedToUpdateSale: 'Failed to update the sale. Please try again.',
+  failedToDeleteSale: 'Failed to delete the sale. Please try again.',
+  failedToDeleteExpense: 'Failed to delete the expense. Please try again.',
+  allCategories: 'All Categories',
+  deleteExpense: 'Delete expense',
 } as const;
 
 /* ────────────────────────────────────────────────────────── */
@@ -500,6 +510,16 @@ const fr = {
   optionalNotes: 'Notes facultatives',
   subtotal: 'Sous-total',
   completeSale: 'Finaliser la vente',
+  salesHistory: 'Historique des ventes',
+  product: 'Produit',
+  allProducts: 'Tous les produits',
+  noSalesHistory: 'Aucune vente pour ces filtres.',
+  editSale: 'Modifier la vente',
+  failedToUpdateSale: 'Échec de la modification de la vente. Réessayez.',
+  failedToDeleteSale: 'Échec de la suppression de la vente. Réessayez.',
+  failedToDeleteExpense: 'Échec de la suppression de la dépense. Réessayez.',
+  allCategories: 'Toutes les catégories',
+  deleteExpense: 'Supprimer la dépense',
 } as const;
 
 /* ────────────────────────────────────────────────────────── */
@@ -751,6 +771,16 @@ const ar = {
   optionalNotes: 'ملاحظات اختيارية',
   subtotal: 'المجموع الفرعي',
   completeSale: 'إتمام البيع',
+  salesHistory: 'سجل المبيعات',
+  product: 'المنتج',
+  allProducts: 'كل المنتجات',
+  noSalesHistory: 'لا توجد مبيعات لهذه المرشحات.',
+  editSale: 'تعديل البيع',
+  failedToUpdateSale: 'تعذر تحديث البيع. حاول مرة أخرى.',
+  failedToDeleteSale: 'تعذر حذف البيع. حاول مرة أخرى.',
+  failedToDeleteExpense: 'تعذر حذف المصروف. حاول مرة أخرى.',
+  allCategories: 'كل الفئات',
+  deleteExpense: 'حذف المصروف',
 } as const;
 
 export const translations = { en, fr, ar } as const;

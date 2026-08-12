@@ -54,7 +54,7 @@ export default function ExpensesPage({ currency }: ExpensesPageProps) {
                                 <p>{expense.category} - {expense.date}</p>
                             </div>
                             <div className="expense-actions">
-                                <span className="expense-amount">{formatCurrency(expense.amount, currency)}</span>
+                                <span className="expense-amount">{formatCurrency(expense.amountMinor, currency)}</span>
                                 <button onClick={() => handleDelete(expense.id)} aria-label="Delete expense">
                                     <TrashIcon />
                                 </button>

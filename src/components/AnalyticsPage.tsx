@@ -44,9 +44,9 @@ export default function AnalyticsPage({
     }
   }, [incomeEntries, viewMode, currentMonth]);
 
-  const totalRevenue = useMemo(() => filteredIncome.reduce((sum, e) => sum + e.amount, 0), [filteredIncome]);
-  const totalExpenses = useMemo(() => expenses.reduce((sum, e) => sum + e.amount, 0), [expenses]);
-  const netProfit = totalRevenue - totalExpenses;
+  const totalRevenueMinor = useMemo(() => filteredIncome.reduce((sum, e) => sum + e.amountMinor, 0), [filteredIncome]);
+  const totalExpensesMinor = useMemo(() => expenses.reduce((sum, e) => sum + e.amountMinor, 0), [expenses]);
+  const netProfitMinor = totalRevenueMinor - totalExpensesMinor;
 
   const topProducts = useMemo(() => {
     const productMap: Record<string, { name: string; revenue: number; quantity: number }> = {};
@@ -54,7 +54,7 @@ export default function AnalyticsPage({
       if (!productMap[entry.productId]) {
         productMap[entry.productId] = { name: entry.productId, revenue: 0, quantity: 0 };
       }
-      productMap[entry.productId].revenue += entry.amount;
+      productMap[entry.productId].revenue += entry.amountMinor;
       productMap[entry.productId].quantity += entry.quantity;
     });
     return Object.values(productMap)
@@ -81,9 +81,9 @@ export default function AnalyticsPage({
       </div>
 
       <div className="analytics-summary">
-        <SummaryCard title={t.totalRevenue} value={formatCurrency(totalRevenue, currency)} />
-        <SummaryCard title={t.totalExpenses} value={formatCurrency(totalExpenses, currency)} />
-        <SummaryCard title={t.netProfit} value={formatCurrency(netProfit, currency)} />
+        <SummaryCard title={t.totalRevenue} value={formatCurrency(totalRevenueMinor, currency)} />
+        <SummaryCard title={t.totalExpenses} value={formatCurrency(totalExpensesMinor, currency)} />
+        <SummaryCard title={t.netProfit} value={formatCurrency(netProfitMinor, currency)} />
       </div>
 
       <div className="analytics-controls">

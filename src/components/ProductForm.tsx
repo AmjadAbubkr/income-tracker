@@ -1,13 +1,12 @@
-import { useState, FormEvent } from 'react';
+import { useState, useRef, FormEvent } from 'react';
 import { Product } from '../types';
-import { getCurrency } from '../utils/currency';
+import { formatMoneyInput, getCurrency, parseMoneyInput } from '../utils/currency';
 import { useLanguage } from '../context/LanguageContext';
 import { useProductMutations } from '../hooks/useProducts';
 import { useCategories } from '../hooks/useCategories';
 
-// Professional SVG icon
 const CameraIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
     <circle cx="12" cy="13" r="4" />
   </svg>
@@ -28,11 +27,11 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
 
   const [name, setName] = useState(initialData?.name || '');
   const [category, setCategory] = useState(initialData?.category || '');
-  const [price, setPrice] = useState(initialData?.price.toString() || '');
+  const [price, setPrice] = useState(initialData ? formatMoneyInput(initialData.priceMinor, currency) : '');
   const [description, setDescription] = useState(initialData?.description || '');
   const [inventory, setInventory] = useState<string>(initialData?.inventory !== undefined ? initialData.inventory.toString() : '');
   const [trackInventory, setTrackInventory] = useState(initialData?.inventory !== undefined);
-  const [image, setImage] = useState<string>(initialData?.image || '');
+  const imageRef = useRef<string>(initialData?.image || '');
   const [imagePreview, setImagePreview] = useState<string>(initialData?.image || '');
   const [error, setError] = useState<string>('');
 
@@ -56,7 +55,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
-        setImage(base64String);
+        imageRef.current = base64String;
         setImagePreview(base64String);
       };
       reader.readAsDataURL(file);
@@ -64,9 +63,8 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
   };
 
   const handleRemoveImage = () => {
-    setImage('');
+    imageRef.current = '';
     setImagePreview('');
-    // Reset file input
     const fileInput = document.getElementById('image') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';
@@ -82,8 +80,8 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
       return;
     }
 
-    const priceNum = parseFloat(price);
-    if (isNaN(priceNum) || priceNum <= 0) {
+    const priceMinor = parseMoneyInput(price, currency);
+    if (priceMinor === null || priceMinor <= 0) {
       alert(t.validPrice);
       return;
     }
@@ -99,10 +97,10 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
 
     const formData = {
       name: name.trim(),
-      price: priceNum,
+      priceMinor,
       description: description.trim() || undefined,
       inventory: trackInventory ? inventoryNum : undefined,
-      image: image || undefined,
+      image: imageRef.current || undefined,
       category: category || undefined,
     };
 
@@ -117,7 +115,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
             setCategory('');
             setInventory('');
             setTrackInventory(false);
-            setImage('');
+            imageRef.current = '';
             setImagePreview('');
             onSuccess?.();
           },
@@ -135,7 +133,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
           setCategory('');
           setInventory('');
           setTrackInventory(false);
-          setImage('');
+          imageRef.current = '';
           setImagePreview('');
           onSuccess?.();
         },
@@ -151,7 +149,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
       <h2>{mode === 'edit' ? t.editProduct : t.addNewProduct}</h2>
 
       {error && (
-        <div className="form-error" style={{ color: 'var(--error-color, #e53e3e)', marginBottom: '1rem', padding: '0.5rem', background: 'rgba(229, 62, 62, 0.1)', borderRadius: '4px' }}>
+        <div className="form-error" style={{ color: 'var(--error)', marginBottom: '1rem', padding: '0.5rem', background: 'var(--error-container)', borderRadius: 'var(--radius-sm)' }}>
           {error}
         </div>
       )}
@@ -160,6 +158,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
         <label htmlFor="name">{t.productName} *</label>
         <input
           id="name"
+          name="productName"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -174,6 +173,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
           <span className="price-symbol">{currencyInfo.symbol}</span>
           <input
             id="price"
+            name="price"
             type="number"
             step="0.01"
             min="0"
@@ -190,6 +190,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
         <label htmlFor="category">{t.category}</label>
         <select
           id="category"
+          name="category"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           disabled={isPending}
@@ -204,6 +205,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
         <label htmlFor="description">{t.description}</label>
         <textarea
           id="description"
+          name="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder={t.optionalDescription}
@@ -215,6 +217,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
         <label>
           <input
             type="checkbox"
+            name="trackInventory"
             checked={trackInventory}
             onChange={(e) => {
               setTrackInventory(e.target.checked);
@@ -230,6 +233,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
         {trackInventory && (
           <input
             type="number"
+            name="inventory"
             min="0"
             step="1"
             value={inventory}
@@ -237,6 +241,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
             placeholder={t.initialStockQuantity}
             className="inventory-input"
             disabled={isPending}
+            aria-label={t.initialStockQuantity}
           />
         )}
       </div>
@@ -245,7 +250,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
         <div className="image-upload-section">
           {imagePreview ? (
             <div className="image-preview-container">
-              <img src={imagePreview} alt="Product preview" className="image-preview" />
+              <img src={imagePreview} alt="Product preview" className="image-preview" width="200" height="200" />
               <button
                 type="button"
                 onClick={handleRemoveImage}
@@ -276,7 +281,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
       </div>
       <div className="form-actions">
         <button type="submit" className="btn btn-primary" disabled={isPending}>
-          {isPending ? (mode === 'edit' ? (t.updating || 'Updating...') : (t.adding || 'Adding...')) : (mode === 'edit' ? t.updateProduct : t.addProduct)}
+          {isPending ? (mode === 'edit' ? (t.updating || 'Updating…') : (t.adding || 'Adding…')) : (mode === 'edit' ? t.updateProduct : t.addProduct)}
         </button>
         {onSuccess && (
           <button type="button" onClick={onSuccess} className="btn btn-secondary" disabled={isPending}>

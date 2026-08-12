@@ -15,7 +15,7 @@ interface CartItem {
   id: string;
   productId: string;
   name: string;
-  price: number;
+  priceMinor: number;
   quantity: number;
 }
 
@@ -58,7 +58,7 @@ export default function SalesPage({ currency }: SalesPageProps) {
     if (existing) {
       setCart(cart.map((item) => (item.productId === product.id ? { ...item, quantity: item.quantity + 1 } : item)));
     } else {
-      setCart([...cart, { id: crypto.randomUUID(), productId: product.id, name: product.name, price: product.price, quantity: 1 }]);
+      setCart([...cart, { id: crypto.randomUUID(), productId: product.id, name: product.name, priceMinor: product.priceMinor, quantity: 1 }]);
     }
   };
 
@@ -74,14 +74,14 @@ export default function SalesPage({ currency }: SalesPageProps) {
     );
   };
 
-  const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const cartTotalMinor = cart.reduce((sum, item) => sum + item.priceMinor * item.quantity, 0);
 
   const handleCompleteSale = async () => {
     for (const item of cart) {
       await incomeStore.add({
         productId: item.productId,
         quantity: item.quantity,
-        amount: item.price * item.quantity,
+        amountMinor: item.priceMinor * item.quantity,
         date: saleDate,
         notes: notes || undefined,
       } as Omit<IncomeEntry, 'id'>);
@@ -118,7 +118,7 @@ export default function SalesPage({ currency }: SalesPageProps) {
         {filteredProducts.map((product) => (
           <div key={product.id} className="product-card" onClick={() => addToCart(product)}>
             <h3>{product.name}</h3>
-            <p className="price">{formatCurrency(product.price, currency)}</p>
+            <p className="price">{formatCurrency(product.priceMinor, currency)}</p>
             {product.inventory !== undefined && (
               <p className="stock">Stock: {product.inventory}</p>
             )}
@@ -136,12 +136,12 @@ export default function SalesPage({ currency }: SalesPageProps) {
               <button onClick={() => updateQuantity(item.id, -1)}>-</button>
               <span>{item.quantity}</span>
               <button onClick={() => updateQuantity(item.id, 1)}>+</button>
-              <span>{formatCurrency(item.price * item.quantity, currency)}</span>
+              <span>{formatCurrency(item.priceMinor * item.quantity, currency)}</span>
               <button onClick={() => removeFromCart(item.id)}>Remove</button>
             </div>
           ))}
           <div className="cart-total">
-            <strong>Total: {formatCurrency(cartTotal, currency)}</strong>
+            <strong>Total: {formatCurrency(cartTotalMinor, currency)}</strong>
           </div>
           <button onClick={() => setShowIncomeModal(true)}>Complete Sale</button>
         </div>

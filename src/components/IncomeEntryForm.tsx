@@ -68,7 +68,7 @@ export default function IncomeEntryForm({
       await onSubmit({
         productId,
         quantity,
-        amount: product.price * quantity,
+        amountMinor: product.priceMinor * quantity,
         date,
         notes: notes.trim() || undefined,
       });
@@ -134,7 +134,7 @@ export default function IncomeEntryForm({
                 </div>
                 <div className="product-info-text">
                   <span className="product-name-v2">{product.name}</span>
-                  <span className="product-meta-v2">{formatCurrency(product.price, currency)} • <span className={status.class} style={{ background: 'transparent', padding: 0 }}>{status.label}</span></span>
+                  <span className="product-meta-v2">{formatCurrency(product.priceMinor, currency)} • <span className={status.class} style={{ background: 'transparent', padding: 0 }}>{status.label}</span></span>
                 </div>
               </div>
 

@@ -42,7 +42,7 @@ export default function LoginPage({ onSwitchMode }: LoginPageProps) {
         <AuthLayout title={t.welcomeBack} subtitle={t.loginSubtitle}>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
                 {error && (
-                    <div className="error-message" style={{
+                    <div className="error-message" role="alert" aria-live="polite" style={{
                         color: 'var(--error)',
                         background: 'rgba(239, 68, 68, 0.1)',
                         padding: 'var(--spacing-sm)',
@@ -66,7 +66,7 @@ export default function LoginPage({ onSwitchMode }: LoginPageProps) {
                         onChange={(e) => setEmail(e.target.value)}
                         className="filter-control"
                         style={{ width: '100%', padding: '10px' }}
-                        placeholder="name@example.com"
+                        placeholder="name@example.com…"
                     />
                 </div>
 
@@ -91,9 +91,10 @@ export default function LoginPage({ onSwitchMode }: LoginPageProps) {
                     type="submit"
                     className="btn btn-primary"
                     disabled={isLoading}
+                    aria-busy={isLoading}
                     style={{ width: '100%', justifyContent: 'center', height: '44px', fontSize: 'var(--font-base)' }}
                 >
-                    {isLoading ? t.signingIn : t.signIn}
+                    {isLoading ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><span style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.4)', borderTopColor: 'white', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} aria-hidden="true" /> {t.signingIn}</span> : t.signIn}
                 </button>
 
                 <p style={{ textAlign: 'center', fontSize: 'var(--font-sm)', color: 'var(--text-muted)', marginTop: 'var(--spacing-md)' }}>

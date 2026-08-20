@@ -43,7 +43,7 @@ export default function BusinessSubscriptionForm({ onSubmit, onClose, currency, 
                     autoComplete="off"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="e.g. GitHub, Netflix, Hosting"
+                    placeholder="e.g. GitHub, Netflix, Hosting…"
                     required
                 />
             </div>
@@ -54,10 +54,12 @@ export default function BusinessSubscriptionForm({ onSubmit, onClose, currency, 
                     <input
                         id="biz-sub-amount"
                         name="bizSubAmount"
-                        type="number"
-                        step="0.01"
+                        type="text"
+                        inputMode="decimal"
+                        autoComplete="off"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
+                        placeholder="0.00…"
                         required
                     />
                 </div>
@@ -84,7 +86,7 @@ export default function BusinessSubscriptionForm({ onSubmit, onClose, currency, 
                     autoComplete="off"
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    placeholder="e.g. Tools, Hosting"
+                    placeholder="e.g. Tools, Hosting…"
                 />
             </div>
 

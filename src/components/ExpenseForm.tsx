@@ -81,9 +81,10 @@ export default function ExpenseForm({ onSubmit, onCancel, currency, initialData 
                     id="description"
                     name="expenseDescription"
                     type="text"
+                    autoComplete="off"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="e.g., Monthly Hosting"
+                    placeholder="e.g., Monthly Hosting…"
                     required
                 />
             </div>
@@ -95,12 +96,12 @@ export default function ExpenseForm({ onSubmit, onCancel, currency, initialData 
                     <input
                         id="amount"
                         name="expenseAmount"
-                        type="number"
-                        step="0.01"
-                        min="0"
+                        type="text"
+                        inputMode="decimal"
+                        autoComplete="off"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
-                        placeholder="0.00"
+                        placeholder="0.00…"
                         required
                         className="price-input"
                     />
@@ -133,11 +134,12 @@ export default function ExpenseForm({ onSubmit, onCancel, currency, initialData 
                     <div style={{ display: 'flex', gap: '8px' }}>
                         <input
                             type="text"
+                            name="customCategory"
+                            autoComplete="off"
                             value={customCategory}
                             onChange={(e) => setCustomCategory(e.target.value)}
-                            placeholder={t.enterCustomCategory}
+                            placeholder={`${t.enterCustomCategory}…`}
                             required
-                            autoFocus
                         />
                         <button
                             type="button"

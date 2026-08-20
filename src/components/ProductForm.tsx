@@ -149,7 +149,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
       <h2>{mode === 'edit' ? t.editProduct : t.addNewProduct}</h2>
 
       {error && (
-        <div className="form-error" style={{ color: 'var(--error)', marginBottom: '1rem', padding: '0.5rem', background: 'var(--error-container)', borderRadius: 'var(--radius-sm)' }}>
+        <div className="form-error" role="alert" aria-live="polite" style={{ color: 'var(--error)', marginBottom: '1rem', padding: '0.5rem', background: 'var(--error-container)', borderRadius: 'var(--radius-sm)' }}>
           {error}
         </div>
       )}
@@ -160,9 +160,10 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
           id="name"
           name="productName"
           type="text"
+          autoComplete="off"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder={t.enterProductName}
+          placeholder={`${t.enterProductName}…`}
           required
           disabled={isPending}
         />
@@ -174,12 +175,12 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
           <input
             id="price"
             name="price"
-            type="number"
-            step="0.01"
-            min="0"
+            type="text"
+            inputMode="decimal"
+            autoComplete="off"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            placeholder="0.00"
+            placeholder="0.00…"
             required
             className="price-input"
             disabled={isPending}
@@ -206,9 +207,10 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
         <textarea
           id="description"
           name="description"
+          autoComplete="off"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder={t.optionalDescription}
+          placeholder={`${t.optionalDescription}…`}
           rows={3}
           disabled={isPending}
         />
@@ -236,9 +238,11 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
             name="inventory"
             min="0"
             step="1"
+            inputMode="numeric"
+            autoComplete="off"
             value={inventory}
             onChange={(e) => setInventory(e.target.value)}
-            placeholder={t.initialStockQuantity}
+            placeholder={`${t.initialStockQuantity}…`}
             className="inventory-input"
             disabled={isPending}
             aria-label={t.initialStockQuantity}
@@ -255,6 +259,7 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
                 type="button"
                 onClick={handleRemoveImage}
                 className="btn-remove-image"
+                aria-label={t.delete}
                 title={t.delete}
                 disabled={isPending}
               >
@@ -280,8 +285,8 @@ export default function ProductForm({ mode, initialData, currency, onSuccess }: 
         </div>
       </div>
       <div className="form-actions">
-        <button type="submit" className="btn btn-primary" disabled={isPending}>
-          {isPending ? (mode === 'edit' ? (t.updating || 'Updating…') : (t.adding || 'Adding…')) : (mode === 'edit' ? t.updateProduct : t.addProduct)}
+        <button type="submit" className="btn btn-primary" disabled={isPending} aria-busy={isPending}>
+          {isPending ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><span className="btn-spinner" style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.4)', borderTopColor: 'white', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} aria-hidden="true" /> {mode === 'edit' ? (t.updating || 'Updating…') : (t.adding || 'Adding…')}</span> : (mode === 'edit' ? t.updateProduct : t.addProduct)}
         </button>
         {onSuccess && (
           <button type="button" onClick={onSuccess} className="btn btn-secondary" disabled={isPending}>

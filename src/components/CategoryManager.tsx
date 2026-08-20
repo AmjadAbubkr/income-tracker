@@ -61,7 +61,7 @@ export default function CategoryManager() {
       </form>
 
       {error && (
-        <div style={{ color: 'var(--error)', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+        <div role="alert" aria-live="polite" style={{ color: 'var(--error)', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
           {error}
         </div>
       )}

@@ -888,7 +888,11 @@ textarea {
   font-size: var(--font-sm);
 }
 
-.search-input:focus {
+.search-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.search-input:focus:not(:focus-visible) {
   outline: none;
 }
 
@@ -1606,12 +1610,19 @@ textarea {
   padding: var(--spacing-sm);
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+.form-group input:focus-visible,
+.form-group select:focus-visible,
+.form-group textarea:focus-visible {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.form-group input:focus:not(:focus-visible),
+.form-group select:focus:not(:focus-visible),
+.form-group textarea:focus:not(:focus-visible) {
+  outline: none;
+  border-color: var(--border);
+  box-shadow: none;
 }
 
 .price-input-wrapper {
@@ -2634,7 +2645,11 @@ textarea {
   color: var(--text);
   padding: 8px 12px;
   font-size: var(--font-sm);
-  outline: none;
+}
+.filter-control:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
 }
 
 .product-table-header-v2 {
@@ -2751,7 +2766,7 @@ textarea {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .qty-btn:hover:not(:disabled) {
@@ -3333,4 +3348,86 @@ textarea {
     color: #111827;
     background: #fff;
   }
+}
+
+/* ── Web Interface Guidelines Fixes ── */
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+  scroll-margin-top: 80px;
+}
+h1[id], h2[id], h3[id] {
+  scroll-margin-top: 80px;
+}
+/* Prevent heading widows */
+p, li {
+  text-wrap: pretty;
+}
+/* Flex children need min-w-0 to allow truncation */
+.product-cell-main,
+.product-info-text,
+.history-item > div,
+.subscription-info,
+.expense-info,
+.table-product-info,
+.profile-info {
+  min-width: 0;
+}
+/* Text truncation for user-generated long content */
+.product-name-v2,
+.subscription-info h3,
+.expense-info h3,
+.history-item strong,
+.table-product-info strong {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.subscription-info p,
+.expense-info p,
+.history-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.history-item span:last-child {
+  white-space: normal;
+}
+/* Spinner for submit buttons */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.btn-spinner {
+  animation: spin 0.7s linear infinite;
+}
+/* Overscroll containment for modals/drawers */
+.modal-overlay,
+.more-sheet,
+.header-dropdown,
+.notification-dropdown {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+/* Touch & interaction */
+button,
+.btn,
+.sidebar-item,
+.qty-btn {
+  touch-action: manipulation;
+}
+* {
+  -webkit-tap-highlight-color: rgba(0, 122, 255, 0.15);
+}
+/* Hover states increase contrast */
+.btn-primary:hover,
+.btn-secondary:hover,
+.sidebar-item:hover,
+.qty-btn:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+/* Content visibility for large lists (>50 items) */
+.products-table-container,
+.history-list,
+.subscription-list {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
 }

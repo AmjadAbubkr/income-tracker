@@ -52,11 +52,13 @@ export default function SubscriptionsPage({ currency }: SubscriptionsPageProps) 
     const [editingCustomer, setEditingCustomer] = useState<string | null>(null);
 
     const handleRemoveBusiness = async (id: string) => {
+        if (!window.confirm(t.confirmDeleteSubscription)) return;
         await subscriptionStore.removeBusiness(id);
         await refreshNotifications();
     };
 
     const handleRemoveCustomer = async (id: string) => {
+        if (!window.confirm(t.confirmDeleteSubscription)) return;
         await subscriptionStore.removeCustomer(id);
         await refreshNotifications();
     };
@@ -91,9 +93,14 @@ export default function SubscriptionsPage({ currency }: SubscriptionsPageProps) 
                 <h1>{t.subscriptions}</h1>
                 <div className="search-bar">
                     <SearchIcon />
+                    <label htmlFor="subscriptions-search" className="sr-only" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>{t.search}</label>
                     <input
+                        id="subscriptions-search"
                         type="text"
-                        placeholder={t.searchPlaceholder}
+                        name="subscriptionsSearch"
+                        autoComplete="off"
+                        aria-label={t.searchPlaceholder}
+                        placeholder={`${t.searchPlaceholder}…`}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />

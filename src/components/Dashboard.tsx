@@ -34,7 +34,7 @@ export default function Dashboard({ currency }: DashboardProps) {
   return (
     <div className="dashboard">
       <div className="page-header">
-        <h1>{t.dashboard}</h1>
+        <h2 style={{ fontSize: 'var(--font-2xl)', fontWeight: 700 }} aria-label={t.dashboard}>{t.dashboard}</h2>
       </div>
 
       <div className="dashboard-summary">

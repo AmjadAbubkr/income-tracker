@@ -14,7 +14,7 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
             justifyContent: 'center',
             minHeight: '100vh',
             background: 'var(--bg)',
-            padding: 'var(--spacing-md)'
+            padding: 'max(var(--spacing-md), env(safe-area-inset-top)) max(var(--spacing-md), env(safe-area-inset-right)) max(var(--spacing-md), env(safe-area-inset-bottom)) max(var(--spacing-md), env(safe-area-inset-left))'
         }}>
             <div className="auth-card" style={{
                 background: 'var(--bg-card)',
@@ -37,7 +37,7 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
                         margin: '0 auto var(--spacing-md)',
                         color: 'white'
                     }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: '28px' }}>account_balance_wallet</span>
+                        <span className="material-symbols-outlined" style={{ fontSize: '28px' }} aria-hidden="true">account_balance_wallet</span>
                     </div>
                     <h1 style={{ fontSize: 'var(--font-xl)', fontWeight: '700', margin: '0 0 8px', color: 'var(--text)' }}>
                         {title}

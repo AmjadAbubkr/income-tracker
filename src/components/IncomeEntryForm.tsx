@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 /* ── Inline Material Symbol helper ── */
 const MIcon = ({ name, size = 18 }: { name: string; size?: number }) => (
-  <span className="material-symbols-outlined" style={{ fontSize: size }}>{name}</span>
+  <span className="material-symbols-outlined" style={{ fontSize: size }} aria-hidden="true">{name}</span>
 );
 
 interface IncomeEntryFormProps {
@@ -83,10 +83,10 @@ export default function IncomeEntryForm({
   };
 
   const getStockStatus = (stock: number | undefined) => {
-    if (stock === undefined) return { label: 'In Stock', class: 'status-high' };
-    if (stock <= 0) return { label: 'Out', class: 'status-low' };
-    if (stock < 10) return { label: 'Low', class: 'status-medium' };
-    return { label: 'High', class: 'status-high' };
+    if (stock === undefined) return { label: t.inStock, class: 'status-high' };
+    if (stock <= 0) return { label: t.outOfStock, class: 'status-low' };
+    if (stock < 10) return { label: t.lowStock, class: 'status-medium' };
+    return { label: t.inStock, class: 'status-high' };
   };
 
   return (
@@ -109,13 +109,13 @@ export default function IncomeEntryForm({
 
         <div className="filter-group">
           <label htmlFor={`${formId}-notes`}>{t.notesOptional}</label>
-          <input
+            <input
             id={`${formId}-notes`}
             name="incomeNotes"
             className="filter-control"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder={t.optionalNotesPlaceholder}
+            placeholder={`${t.optionalNotesPlaceholder}…`}
             autoComplete="off"
           />
         </div>
@@ -139,11 +139,11 @@ export default function IncomeEntryForm({
               </div>
 
               <div className="qty-control-v2">
-                <button type="button" className="qty-btn" onClick={() => handleQuantityChange(product.id, -1)} disabled={qty === 0} aria-label="Decrease quantity">
+                <button type="button" className="qty-btn" onClick={() => handleQuantityChange(product.id, -1)} disabled={qty === 0} aria-label={t.decreaseQuantity}>
                   <MIcon name="remove" size={14} />
                 </button>
-                <span className="qty-val">{qty}</span>
-                <button type="button" className="qty-btn plus" onClick={() => handleQuantityChange(product.id, 1)} aria-label="Increase quantity">
+                <span className="qty-val" aria-live="polite">{qty}</span>
+                <button type="button" className="qty-btn plus" onClick={() => handleQuantityChange(product.id, 1)} aria-label={t.increaseQuantity}>
                   <MIcon name="add" size={14} />
                 </button>
               </div>
@@ -162,6 +162,7 @@ export default function IncomeEntryForm({
                   type="button"
                   className="btn-delete-product"
                   style={{ opacity: 0.5 }}
+                  aria-label={`${t.delete}: ${product.name}`}
                   onClick={() => confirm(t.confirmDeleteProduct) && onDeleteProduct(product.id)}
                 >
                   <MIcon name="delete" />

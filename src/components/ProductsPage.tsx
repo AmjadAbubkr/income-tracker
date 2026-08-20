@@ -7,14 +7,14 @@ import ProductForm from './ProductForm';
 import { useNotifications } from '../context/NotificationContext';
 
 const EditIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
   </svg>
 );
 
 const TrashIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <polyline points="3 6 5 6 21 6" />
     <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
     <path d="M10 11v6" />
@@ -137,7 +137,10 @@ export default function ProductsPage({
       </div>
 
       <div className="products-controls" style={{ marginBottom: '1rem' }}>
+        <label htmlFor="products-category-filter" className="sr-only" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>{t.category}</label>
         <select
+          id="products-category-filter"
+          aria-label={t.category}
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
           className="settings-select"
@@ -195,6 +198,7 @@ export default function ProductsPage({
                           type="button"
                           onClick={() => setEditingProduct(product)}
                           className="btn-table-edit"
+                          aria-label={`${t.edit}: ${product.name}`}
                           title={t.edit}
                         >
                           <EditIcon />
@@ -203,6 +207,7 @@ export default function ProductsPage({
                           type="button"
                           onClick={() => handleDelete(product.id)}
                           className="btn-table-delete"
+                          aria-label={`${t.delete}: ${product.name}`}
                           title={t.delete}
                         >
                           <TrashIcon />
@@ -219,7 +224,7 @@ export default function ProductsPage({
 
       {/* Add Product Modal */}
       {isFormOpen && (
-        <div className="modal-overlay" onClick={() => setIsFormOpen(false)} onKeyDown={(e) => { if (e.key === 'Escape') setIsFormOpen(false) }} role="dialog" aria-modal="true" aria-label={t.addProduct}>
+        <div className="modal-overlay" onClick={() => setIsFormOpen(false)} onKeyDown={(e) => { if (e.key === 'Escape') setIsFormOpen(false) }} role="dialog" aria-modal="true" aria-label={t.addProduct} tabIndex={-1} style={{ overscrollBehavior: 'contain' }}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>{t.addProduct}</h2>
@@ -227,6 +232,7 @@ export default function ProductsPage({
                 type="button"
                 className="modal-close"
                 onClick={() => setIsFormOpen(false)}
+                aria-label={t.close}
                 title={t.close}
               >
                 ×
@@ -245,7 +251,7 @@ export default function ProductsPage({
 
       {/* Edit Product Modal */}
       {editingProduct && (
-        <div className="modal-overlay" onClick={() => setEditingProduct(null)} onKeyDown={(e) => { if (e.key === 'Escape') setEditingProduct(null) }} role="dialog" aria-modal="true" aria-label={t.editProduct}>
+        <div className="modal-overlay" onClick={() => setEditingProduct(null)} onKeyDown={(e) => { if (e.key === 'Escape') setEditingProduct(null) }} role="dialog" aria-modal="true" aria-label={t.editProduct} tabIndex={-1} style={{ overscrollBehavior: 'contain' }}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>{t.editProduct}</h2>
@@ -253,6 +259,7 @@ export default function ProductsPage({
                 type="button"
                 className="modal-close"
                 onClick={() => setEditingProduct(null)}
+                aria-label={t.close}
                 title={t.close}
               >
                 ×

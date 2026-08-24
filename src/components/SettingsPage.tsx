@@ -8,7 +8,7 @@ import CategoryManager from './CategoryManager';
 
 /* ── Inline Material Symbol helper ── */
 const MIcon = ({ name, size = 20 }: { name: string; size?: number }) => (
-  <span className="material-symbols-outlined" style={{ fontSize: size }}>{name}</span>
+  <span className="material-symbols-outlined" style={{ fontSize: size }} aria-hidden="true">{name}</span>
 );
 
 interface SettingsPageProps {
@@ -113,8 +113,8 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
           <p className="page-subtitle">{t.settingsSubtitle}</p>
         </div>
         <div className="header-actions">
-          <button className="btn btn-primary" onClick={handleSave} disabled={isProcessing} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <MIcon name="save" size={18} /> {isProcessing ? '…' : t.saveChanges || 'Save Changes'}
+          <button className="btn btn-primary" onClick={handleSave} disabled={isProcessing} aria-busy={isProcessing} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <MIcon name="save" size={18} /> {isProcessing ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><span style={{ width: 14, height: 14, border: '2px solid rgba(255,255,255,0.4)', borderTopColor: 'white', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} aria-hidden="true" /> Saving…</span> : (t.saveChanges || 'Save Changes')}
           </button>
         </div>
       </div>
@@ -140,6 +140,8 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
                   <input
                     type="text"
                     id="profile-first-name"
+                    name="firstName"
+                    autoComplete="given-name"
                     className="filter-control"
                     value={formData.firstName}
                     onChange={(e) => handleFieldChange('firstName', e.target.value)}
@@ -150,6 +152,8 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
                   <input
                     type="text"
                     id="profile-last-name"
+                    name="lastName"
+                    autoComplete="family-name"
                     className="filter-control"
                     value={formData.lastName}
                     onChange={(e) => handleFieldChange('lastName', e.target.value)}
@@ -160,6 +164,8 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
                   <input
                     type="text"
                     id="profile-display-name"
+                    name="displayName"
+                    autoComplete="name"
                     className="filter-control"
                     value={formData.name}
                     onChange={(e) => handleFieldChange('name', e.target.value)}
@@ -172,6 +178,9 @@ export default function SettingsPage({ currency, onCurrencyChange }: SettingsPag
                     <input
                       type="email"
                       id="profile-email"
+                      name="email"
+                      autoComplete="email"
+                      spellCheck={false}
                       className="filter-control"
                       style={{ width: '100%' }}
                       value={formData.email}

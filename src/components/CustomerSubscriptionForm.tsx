@@ -45,7 +45,7 @@ export default function CustomerSubscriptionForm({ onSubmit, onClose, currency, 
                     autoComplete="off"
                     value={formData.customerName}
                     onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                    placeholder="e.g. John Doe, Acme Corp"
+                    placeholder="e.g. John Doe, Acme Corp…"
                     required
                 />
             </div>
@@ -59,7 +59,7 @@ export default function CustomerSubscriptionForm({ onSubmit, onClose, currency, 
                     autoComplete="off"
                     value={formData.serviceName}
                     onChange={(e) => setFormData({ ...formData, serviceName: e.target.value })}
-                    placeholder="e.g. Premium Plan, Maintenance"
+                    placeholder="e.g. Premium Plan, Maintenance…"
                     required
                 />
             </div>
@@ -70,10 +70,12 @@ export default function CustomerSubscriptionForm({ onSubmit, onClose, currency, 
                     <input
                         id="cust-sub-amount"
                         name="custSubAmount"
-                        type="number"
-                        step="0.01"
+                        type="text"
+                        inputMode="decimal"
+                        autoComplete="off"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
+                        placeholder="0.00…"
                         required
                     />
                 </div>
@@ -135,9 +137,10 @@ export default function CustomerSubscriptionForm({ onSubmit, onClose, currency, 
                 <textarea
                     id="cust-sub-notes"
                     name="custSubNotes"
+                    autoComplete="off"
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    placeholder={t.optionalNotesPlaceholder}
+                    placeholder={`${t.optionalNotesPlaceholder}…`}
                 />
             </div>
 

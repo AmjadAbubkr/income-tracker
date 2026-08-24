@@ -11,11 +11,18 @@ interface PrintReportProps {
 export default function PrintReport({ report, currency, period }: PrintReportProps) {
   const { t } = useLanguage();
   const periodLabel = t[period];
+  const formatDate = (iso: string) => {
+    try {
+      return new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(iso));
+    } catch {
+      return iso;
+    }
+  };
 
   return (
     <section className="print-report" aria-label={t.printReport}>
-      <h1>{t.financialSummary}</h1>
-      <p>{periodLabel}: {report.range.start || t.allTime} {report.range.end && `– ${report.range.end}`}</p>
+      <h2>{t.financialSummary}</h2>
+      <p>{periodLabel}: {(report.range.start && formatDate(report.range.start)) || t.allTime} {report.range.end && `– ${formatDate(report.range.end)}`}</p>
       <div className="print-summary-grid">
         <div><span>{t.totalRevenue}</span><strong>{formatCurrency(report.totalRevenueMinor, currency)}</strong></div>
         <div><span>{t.totalExpenses}</span><strong>{formatCurrency(report.totalExpensesMinor, currency)}</strong></div>

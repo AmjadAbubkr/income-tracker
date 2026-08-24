@@ -34,7 +34,7 @@ export default function Dashboard({ currency }: DashboardProps) {
   return (
     <div className="dashboard">
       <div className="page-header">
-        <h1>{t.dashboard}</h1>
+        <h2 style={{ fontSize: 'var(--font-2xl)', fontWeight: 700 }} aria-label={t.dashboard}>{t.dashboard}</h2>
       </div>
 
       <div className="dashboard-summary">
@@ -63,25 +63,31 @@ export default function Dashboard({ currency }: DashboardProps) {
             ))}
           </div>
         </div>
-        <ResponsiveContainer width="100%" height={400}>
-          <AreaChart data={chartData}>
-            <defs>
-              <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#22c55e" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="colorCosts" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <XAxis dataKey="name" />
-            <YAxis tickFormatter={(value: number) => formatCurrency(value, currency)} />
-            <Tooltip formatter={(value: number) => formatCurrency(value, currency)} />
-            <Area type="monotone" dataKey="revenue" stroke="#22c55e" fillOpacity={1} fill="url(#colorRevenue)" />
-            <Area type="monotone" dataKey="costs" stroke="#ef4444" fillOpacity={1} fill="url(#colorCosts)" />
-          </AreaChart>
-        </ResponsiveContainer>
+        {chartData.length === 0 ? (
+          <div className="chart-empty-state dashboard-chart-empty" role="status">
+            {t.noDataForPeriod}
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={400}>
+            <AreaChart data={chartData}>
+              <defs>
+                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorCosts" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="name" />
+              <YAxis tickFormatter={(value: number) => formatCurrency(value, currency)} />
+              <Tooltip formatter={(value: number) => formatCurrency(value, currency)} />
+              <Area type="monotone" dataKey="revenue" stroke="#22c55e" fillOpacity={1} fill="url(#colorRevenue)" />
+              <Area type="monotone" dataKey="costs" stroke="#ef4444" fillOpacity={1} fill="url(#colorCosts)" />
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       <section className="recent-activity" aria-labelledby="dashboard-activity-title">

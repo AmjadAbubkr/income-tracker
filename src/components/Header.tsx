@@ -28,7 +28,7 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
   const userRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns when clicking outside their containers
+  // Close dropdowns when clicking outside or pressing Escape
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userRef.current && !userRef.current.contains(event.target as Node)) {
@@ -38,8 +38,18 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
         setShowNotifDropdown(false);
       }
     };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setShowUserDropdown(false);
+        setShowNotifDropdown(false);
+      }
+    };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -114,7 +124,7 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
             <div className="header-dropdown notification-dropdown">
               <div className="dropdown-header">
                 <h3>{t.notifications}</h3>
-                <button onClick={clearAll} className="clear-btn">{t.clearAll || 'Clear'}</button>
+                <button type="button" onClick={clearAll} className="clear-btn" aria-label={t.clearAll || 'Clear'}>{t.clearAll || 'Clear'}</button>
               </div>
               <div className="dropdown-list">
                 {notifications.length === 0 ? (
@@ -170,11 +180,11 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
               </div>
               <div className="dropdown-divider"></div>
               <button type="button" className="dropdown-item" onClick={() => { onViewChange('settings'); setShowUserDropdown(false); }}>
-                <span className="material-symbols-outlined">settings</span>
+                <span className="material-symbols-outlined" aria-hidden="true">settings</span>
                 <span>{t.settings}</span>
               </button>
               <button type="button" className="dropdown-item logout" onClick={handleLogout}>
-                <span className="material-symbols-outlined">logout</span>
+                <span className="material-symbols-outlined" aria-hidden="true">logout</span>
                 <span>{t.logout}</span>
               </button>
             </div>
@@ -195,21 +205,25 @@ export default function Header({ currency, onCurrencyChange, searchQuery, onSear
             </div>
             <div className="dropdown-divider"></div>
             <button type="button" className="dropdown-item" onClick={() => { onViewChange('settings'); setShowUserDropdown(false); }}>
-              <span className="material-symbols-outlined">settings</span>
+              <span className="material-symbols-outlined" aria-hidden="true">settings</span>
               <span>{t.settings}</span>
             </button>
             <button type="button" className="dropdown-item logout" onClick={handleLogout}>
-              <span className="material-symbols-outlined">logout</span>
+              <span className="material-symbols-outlined" aria-hidden="true">logout</span>
               <span>{t.logout}</span>
             </button>
           </div>
         )}
 
         <div className="currency-selector-header desktop-only">
+          <label htmlFor="header-currency" className="sr-only" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>{t.currency || 'Currency'}</label>
           <select
+            id="header-currency"
+            aria-label={t.currency || 'Currency'}
             value={currency}
             onChange={(e) => onCurrencyChange(e.target.value)}
             className="currency-select-header"
+            style={{ backgroundColor: 'var(--bg-card-solid)', color: 'var(--text)' }}
           >
             {CURRENCIES.map((curr) => (
               <option key={curr.code} value={curr.code}>

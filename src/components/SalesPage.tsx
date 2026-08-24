@@ -10,7 +10,7 @@ import { useNotifications } from '../context/NotificationContext';
 
 /* ── Icons ── */
 const MIcon = ({ name, size = 18 }: { name: string; size?: number }) => (
-  <span className="material-symbols-outlined" style={{ fontSize: size }}>{name}</span>
+  <span className="material-symbols-outlined" style={{ fontSize: size }} aria-hidden="true">{name}</span>
 );
 
 interface CartItem {
@@ -222,13 +222,21 @@ export default function SalesPage({ currency }: SalesPageProps) {
         />
       )}
       {showIncomeModal && (
-        <div className="form-actions">
-          <button type="button" className="btn btn-primary" onClick={handleCompleteSale} disabled={isSubmitting}>
-            {t.confirm}
-          </button>
-          <button type="button" className="btn btn-secondary" onClick={() => setShowIncomeModal(false)}>
-            {t.cancel}
-          </button>
+        <div className="modal-overlay" role="dialog" aria-modal="true" aria-label={t.completeSale} tabIndex={-1} style={{ overscrollBehavior: 'contain' }} onClick={() => setShowIncomeModal(false)} onKeyDown={(e) => { if (e.key === 'Escape') setShowIncomeModal(false); }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>{t.completeSale}</h2>
+              <button type="button" className="modal-close" onClick={() => setShowIncomeModal(false)} aria-label={t.close} title={t.close}>×</button>
+            </div>
+            <div className="form-actions" style={{ padding: '1rem' }}>
+              <button type="button" className="btn btn-primary" onClick={handleCompleteSale} disabled={isSubmitting} aria-busy={isSubmitting}>
+                {isSubmitting ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><span className="btn-spinner" style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.4)', borderTopColor: 'white', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} aria-hidden="true" /> {t.confirm}</span> : t.confirm}
+              </button>
+              <button type="button" className="btn btn-secondary" onClick={() => setShowIncomeModal(false)}>
+                {t.cancel}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -284,11 +292,11 @@ export default function SalesPage({ currency }: SalesPageProps) {
       </section>
 
       {editingSale && (
-        <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="edit-sale-title">
-          <div className="modal-content">
+        <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="edit-sale-title" tabIndex={-1} style={{ overscrollBehavior: 'contain' }} onClick={() => setEditingSale(null)} onKeyDown={(e) => { if (e.key === 'Escape') setEditingSale(null); }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2 id="edit-sale-title">{t.editSale}</h2>
-              <button type="button" className="modal-close" onClick={() => setEditingSale(null)} title={t.close}>×</button>
+              <button type="button" className="modal-close" onClick={() => setEditingSale(null)} aria-label={t.close} title={t.close}>×</button>
             </div>
             <form className="modal-body" onSubmit={handleUpdateSale}>
               <label className="form-group">

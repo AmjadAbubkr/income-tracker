@@ -888,7 +888,11 @@ textarea {
   font-size: var(--font-sm);
 }
 
-.search-input:focus {
+.search-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.search-input:focus:not(:focus-visible) {
   outline: none;
 }
 
@@ -1606,12 +1610,19 @@ textarea {
   padding: var(--spacing-sm);
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+.form-group input:focus-visible,
+.form-group select:focus-visible,
+.form-group textarea:focus-visible {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.form-group input:focus:not(:focus-visible),
+.form-group select:focus:not(:focus-visible),
+.form-group textarea:focus:not(:focus-visible) {
+  outline: none;
+  border-color: var(--border);
+  box-shadow: none;
 }
 
 .price-input-wrapper {
@@ -2634,7 +2645,11 @@ textarea {
   color: var(--text);
   padding: 8px 12px;
   font-size: var(--font-sm);
-  outline: none;
+}
+.filter-control:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
 }
 
 .product-table-header-v2 {
@@ -2751,7 +2766,7 @@ textarea {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .qty-btn:hover:not(:disabled) {
@@ -3333,4 +3348,323 @@ textarea {
     color: #111827;
     background: #fff;
   }
+}
+
+/* ── Web Interface Guidelines Fixes ── */
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+  scroll-margin-top: 80px;
+}
+h1[id], h2[id], h3[id] {
+  scroll-margin-top: 80px;
+}
+/* Prevent heading widows */
+p, li {
+  text-wrap: pretty;
+}
+
+/* ── Spacing & Layout Polish ── */
+/* Page headers with action buttons sit side by side */
+.sales-page .page-header,
+.expenses-page .page-header,
+.subscriptions-page .page-header,
+.products-page .page-header,
+.settings-page .page-header,
+.analytics-page .page-header {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+@media (max-width: 600px) {
+  .sales-page .page-header,
+  .expenses-page .page-header,
+  .subscriptions-page .page-header,
+  .products-page .page-header,
+  .analytics-page .page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .sales-page .page-header .btn-primary,
+  .expenses-page .page-header .btn-primary,
+  .subscriptions-page .page-header .btn-primary,
+  .products-page .page-header .btn-primary {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* Page containers breathe */
+.sales-page,
+.expenses-page,
+.subscriptions-page,
+.products-page,
+.analytics-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* Category filter chips */
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+}
+.category-btn {
+  padding: var(--spacing-xs) var(--spacing-md);
+  min-height: 40px;
+  border-radius: 9999px;
+  font-size: var(--font-sm);
+}
+
+/* Cart (SalesPage) — previously unstyled */
+.cart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+.cart > h3 {
+  margin: 0;
+  font-size: var(--font-lg);
+}
+.cart-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+}
+.cart-item > span:first-child {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.cart-item button[type="button"] {
+  min-width: 36px;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+}
+.cart-total {
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--border);
+  font-size: var(--font-base);
+}
+.cart > button[type="button"] {
+  min-height: 44px;
+  font-weight: 600;
+}
+
+/* Expense items — previously unstyled */
+.expenses-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+.expense-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm) var(--spacing-md);
+  padding: var(--spacing-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.expense-item:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+.expense-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xs);
+  flex: 1;
+}
+.expense-info h3 {
+  margin: 0;
+  font-size: var(--font-base);
+  font-weight: 600;
+}
+.expense-info p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--font-sm);
+}
+.expense-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+.expense-amount {
+  font-weight: 700;
+  font-size: var(--font-base);
+  font-variant-numeric: tabular-nums;
+  margin-right: var(--spacing-xs);
+}
+.expense-actions button {
+  padding: var(--spacing-xs) var(--spacing-md);
+  min-height: 38px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.expense-actions button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Subscriptions summary cards */
+.subscriptions-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--spacing-md);
+}
+
+/* History rows get breathing room */
+.history-item {
+  padding: var(--spacing-md) var(--spacing-lg);
+  gap: var(--spacing-md);
+}
+.history-actions {
+  gap: var(--spacing-xs);
+}
+.history-actions button + strong {
+  margin-left: var(--spacing-xs);
+}
+.history-filters {
+  padding: var(--spacing-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+/* Products controls spacing */
+.products-controls {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Empty states breathe */
+.empty-state-card {
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+/* Form actions aligned right with top margin */
+form .form-actions {
+  margin-top: var(--spacing-lg);
+  justify-content: flex-end;
+}
+
+/* Modal body padding for form modals rendered inside modal-body */
+.modal-body {
+  padding: var(--spacing-lg);
+  max-height: 70vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.modal-header {
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+.modal-content {
+  max-width: 640px;
+  width: 100%;
+}
+
+/* Inline confirm buttons in IncomeEntryForm */
+.product-row-v2 .btn.btn-primary {
+  padding: var(--spacing-xs) var(--spacing-md);
+  min-height: 40px;
+}
+
+/* Flex children need min-w-0 to allow truncation */
+.product-cell-main,
+.product-info-text,
+.history-item > div,
+.subscription-info,
+.expense-info,
+.table-product-info,
+.profile-info {
+  min-width: 0;
+}
+/* Text truncation for user-generated long content */
+.product-name-v2,
+.subscription-info h3,
+.expense-info h3,
+.history-item strong,
+.table-product-info strong {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.subscription-info p,
+.expense-info p,
+.history-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.history-item span:last-child {
+  white-space: normal;
+}
+/* Spinner for submit buttons */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.btn-spinner {
+  animation: spin 0.7s linear infinite;
+}
+/* Overscroll containment for modals/drawers */
+.modal-overlay,
+.more-sheet,
+.header-dropdown,
+.notification-dropdown {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+/* Touch & interaction */
+button,
+.btn,
+.sidebar-item,
+.qty-btn {
+  touch-action: manipulation;
+}
+* {
+  -webkit-tap-highlight-color: rgba(0, 122, 255, 0.15);
+}
+/* Hover states increase contrast */
+.btn-primary:hover,
+.btn-secondary:hover,
+.sidebar-item:hover,
+.qty-btn:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+/* Content visibility for large lists (>50 items) */
+.products-table-container,
+.history-list,
+.subscription-list {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
 }

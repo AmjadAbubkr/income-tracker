@@ -46,7 +46,7 @@ export default function RegisterPage({ onSwitchMode }: RegisterPageProps) {
         <AuthLayout title={t.registerTitle} subtitle={t.registerSubtitle}>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-lg)' }}>
                 {error && (
-                    <div className="error-message" style={{
+                    <div className="error-message" role="alert" aria-live="polite" style={{
                         color: 'var(--error)',
                         background: 'rgba(239, 68, 68, 0.1)',
                         padding: 'var(--spacing-sm)',
@@ -69,7 +69,7 @@ export default function RegisterPage({ onSwitchMode }: RegisterPageProps) {
                         onChange={(e) => setName(e.target.value)}
                         className="filter-control"
                         style={{ width: '100%', padding: '10px' }}
-                        placeholder="John Doe"
+                        placeholder="John Doe…"
                     />
                 </div>
 
@@ -85,7 +85,7 @@ export default function RegisterPage({ onSwitchMode }: RegisterPageProps) {
                         onChange={(e) => setEmail(e.target.value)}
                         className="filter-control"
                         style={{ width: '100%', padding: '10px' }}
-                        placeholder="name@example.com"
+                        placeholder="name@example.com…"
                     />
                 </div>
 
@@ -123,9 +123,10 @@ export default function RegisterPage({ onSwitchMode }: RegisterPageProps) {
                     type="submit"
                     className="btn btn-primary"
                     disabled={isLoading}
+                    aria-busy={isLoading}
                     style={{ width: '100%', justifyContent: 'center', height: '44px', fontSize: 'var(--font-base)' }}
                 >
-                    {isLoading ? t.creatingAccount : t.createAccount}
+                    {isLoading ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><span style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.4)', borderTopColor: 'white', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} aria-hidden="true" /> {t.creatingAccount}</span> : t.createAccount}
                 </button>
 
                 <p style={{ textAlign: 'center', fontSize: 'var(--font-sm)', color: 'var(--text-muted)', marginTop: 'var(--spacing-md)' }}>
